@@ -9,9 +9,10 @@
     ]
   },
   "scripts": {
-    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   },
+
   "repository": {
     "type": "git",
     "url": "\u001b[A\u001b[C\u001b[C\u001b[y:"
