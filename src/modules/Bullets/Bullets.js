@@ -10,76 +10,50 @@ export default class Bullets {
         this.shootSound.stopTime = 0.307;
     }
 
-    addBullet(bulletType, bulletSubType, x, y) {
+    addBullet(type, subType, x, y) {
         let newBullet,
-            bulletWidth,
-            bulletHeight,
-            bulletDirection,
-            bulletSpeed,
+            bulletInfo,
+            width,
+            height,
+            direction,
+            speed,
             spriteX,
             spriteY;
 
-        switch (bulletType) {
+        switch (type) {
             case "tank":
-                const tankBulletInfo = TANK.bulletInfo;
-                console.log("Tank bullet inf", tankBulletInfo);
                 this.shootSound.play();
-                bulletWidth = tankBulletInfo.width;
-                bulletHeight = tankBulletInfo.height;
-                bulletDirection = "up";
-                bulletSpeed = tankBulletInfo.speed;
-                spriteX = tankBulletInfo.spriteX;
-                spriteY = tankBulletInfo.spriteY;
-                // newBullet = new Bullet(
-                //     "tank",
-                //     bulletSubType,
-                //     x,
-                //     y,
-                //     tankBulletInfo.width,
-                //     tankBulletInfo.height,
-                //     "up",
-                //     tankBulletInfo.speed
-                // );
+                bulletInfo = TANK.bulletInfo;
+                direction = "up";
                 break;
             case "invader":
-                const invaderInfo = INVADER.find((inv) => inv.type === bulletSubType);
-                const invaderBulletInfo = invaderInfo.bulletInfo;
-                // newBullet = new Bullet(
-                //     "invader",
-                //     bulletSubType,
-                //     x,
-                //     y,
-                //     invaderBulletInfo.width,
-                //     invaderBulletInfo.y,
-                //     "down",
-                //     invaderBulletInfo.speed
-                // );
+                const invaderInfo = INVADER.find((inv) => inv.type === subType);
+                bulletInfo = invaderInfo.bulletInfo;
+                direction = "down";
                 break;
             case "mothership":
-                const mothershipBulletInfo = MOTHERSHIP.bulletInfo;
-                // newBullet = new Bullet(
-                //     "mothership",
-                //     bulletSubType,
-                //     x,
-                //     y,
-                //     mothershipBulletInfo.width,
-                //     mothershipBulletInfo.height,
-                //     "down",
-                //     mothershipBulletInfo.speed
-                // );
+                bulletInfo = MOTHERSHIP.bulletInfo;
+                direction = "down";
                 break;
             default:
                 break;
         }
+
+        width = bulletInfo.width;
+        height = bulletInfo.height;
+        speed = bulletInfo.speed;
+        spriteX = bulletInfo.spriteX;
+        spriteY = bulletInfo.spriteY;
+
         newBullet = new Bullet(
-            bulletType,
-            bulletSubType,
+            type,
+            subType,
             x,
             y,
-            bulletWidth,
-            bulletHeight,
-            bulletDirection,
-            bulletSpeed,
+            width,
+            height,
+            direction,
+            speed,
             spriteX,
             spriteY
         );
