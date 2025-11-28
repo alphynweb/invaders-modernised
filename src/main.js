@@ -228,7 +228,7 @@ const handleTankBulletCollisions = () => {
 
                 if (damageCity === true) { // If pixel alpha is 255
                     cityHit.damage(tankBullet);
-                    bullets.remove(tankBulletIndex);
+                    bullets.removeBullet(tankBulletIndex);
                 }
             }
         }
@@ -241,7 +241,7 @@ const handleTankBulletCollisions = () => {
             if (collisionInfo.didCollide) {
                 mothership.destroy();
                 resetMothershipTime();
-                bullets.remove(tankBulletIndex);
+                bullets.removeBullet(tankBulletIndex);
                 score.increase(500);
             }
         }
@@ -283,7 +283,7 @@ const handleInvaderBulletCollisions = () => {
                     gameStates.currentState = gameStates.loseLife;
 
                     inputHandler.currentKeysPressed = []; // Clear out the input handler info
-                    bullets.remove(index);
+                    bullets.removeBullet(index);
                     tank.destroy();
                     lives.loseLife();
                     if (lives.currentLives === 0) {
@@ -315,7 +315,7 @@ const handleInvaderBulletCollisions = () => {
 
                         if (damageCity === true) { // If pixel alpha is 255
                             cityHit.damage(bullet);
-                            bullets.remove(index);
+                            bullets.removeBullet(index);
                         }
                     }
                 }
