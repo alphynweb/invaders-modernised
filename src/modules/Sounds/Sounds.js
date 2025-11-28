@@ -14,7 +14,7 @@ const sounds = () => {
                     this.pause();
                 }
             });
-            this.soundObject.play();
+            // this.soundObject.play();
         },
         pause: function() {
             this.soundObject.pause();
