@@ -30,11 +30,14 @@ let lives;
 let tank;
 let invaders;
 let bullets;
+let bulletType;
+let bulletSubType;
+let bulletX;
+let bulletY;
 let cities;
 let mothership;
 let mothershipOldTime = 0;
 let mothershipNewTime;
-
 let collisionDetector;
 let collisionInfo;
 let inputHandler;
@@ -58,7 +61,7 @@ const init = () => {
     lives = Lives();
     tank = Object.assign(Tank(), TANK);
     invaders = Invaders();
-    bullets = Bullets();
+    bullets = new Bullets();
     cities = Cities();
     mothership = Object.assign(Mothership(), MOTHERSHIP);
     collisionDetector = CollisionDetector(tank, tank);
@@ -92,7 +95,17 @@ const update = (currentTime) => {
             return bullet.type === 'tank';
         });
         if (!isTankBullet) {
-            bullets.addBullet('tank', null, tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2), tank.y - TANK.bulletInfo.height);
+            // bullets.addBullet("tank", null, tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2), tank.y - TANK.bulletInfo.height);
+            bulletType = "tank";
+            bulletSubType = null;
+            bulletX = tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2);
+            bulletY = tank.y - TANK.bulletInfo.height;
+            bullets.addBullet(
+                bulletType,
+                bulletSubType,
+                bulletX,
+                bulletY
+            )
             tank.animationType = 'shoot';
             tank.animationFrame = 1;
         }
@@ -183,7 +196,7 @@ const handleTankBulletCollisions = () => {
                     score.increase(invaderHit.score);
                     invaderHit.destroy(i);
                     invaderMoveTime -= INVADERS.speedIncrease;
-                    bullets.remove(tankBulletIndex);
+                    bullets.removeBullet(tankBulletIndex);
                     break;
                 }
             }
@@ -325,7 +338,7 @@ const handleMothershipBulletCollisions = () => {
                 gameStates.currentState = gameStates.loseLife;
 
                 inputHandler.currentKeysPressed = []; // Clear out the input handler info
-                bullets.remove(index);
+                bullets.removeBullet(index);
                 tank.destroy();
                 lives.loseLife();
                 if (lives.currentLives === 0) {
