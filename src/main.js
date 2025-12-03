@@ -60,7 +60,7 @@ const init = () => {
     score = Score();
     lives = Lives();
     tank = Object.assign(Tank(), TANK);
-    invaders = Invaders();
+    invaders = new Invaders(invader_group_y);
     bullets = new Bullets();
     cities = Cities();
     mothership = Object.assign(Mothership(), MOTHERSHIP);
@@ -448,21 +448,32 @@ const gameStates = {
         // Render Score
         screen.ctx.font = GAME_TEXT.font;
 
-        const invaderX = 300;
+        const x = 300;
         const textX = 600;
         const verticalSpacing = 60;
 
         let currentYPos = 0;
 
         INVADER.forEach((invader, index) => {
-            const introInvader = Invader();
-            introInvader.width = invader.width;
-            introInvader.height = invader.height;
-            introInvader.x = invaderX;
-            introInvader.y = (index + 1) * verticalSpacing;
+            const y = (index + 1) * verticalSpacing;
+            const type = invader.type;
+            const invaderInfo = invader;
+            const introInvader = new Invader(
+                type,
+                null,
+                null,
+                x,
+                y,
+                null
+            )
+            // introInvader.width = invader.width;
+            // introInvader.height = invader.height;
+            introInvader.x = x;
+            introInvader.y = y;
             introInvader.spriteX = invader.spriteX;
             introInvader.spriteY = invader.spriteY;
             introInvader.score = invader.score;
+
 
             // Render invader
             introInvader.render();
@@ -476,7 +487,7 @@ const gameStates = {
         // Mothership
         const mothership = Object.assign(Mothership(), MOTHERSHIP);
 
-        mothership.x = invaderX - 6;
+        mothership.x = x - 6;
         mothership.y = currentYPos + verticalSpacing + 6;
         mothership.isActive = true;
 
@@ -492,7 +503,7 @@ const gameStates = {
 
         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
 
-        screen.ctx.fillText(String.fromCharCode('8592'), invaderX, instructionsY);
+        screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
 
         screen.ctx.font = GAME_TEXT.font;
 
@@ -502,7 +513,7 @@ const gameStates = {
 
         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
 
-        screen.ctx.fillText(String.fromCharCode('8594'), invaderX, instructionsY);
+        screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
 
         screen.ctx.font = GAME_TEXT.font;
 
@@ -510,7 +521,7 @@ const gameStates = {
 
         instructionsY += verticalSpacing;
 
-        screen.ctx.fillText("Space bar", invaderX, instructionsY);
+        screen.ctx.fillText("Space bar", x, instructionsY);
 
         screen.ctx.fillText("Fire", textX, instructionsY);
 
