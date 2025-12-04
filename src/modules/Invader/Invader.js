@@ -5,6 +5,7 @@ import Sounds from '../Sounds/Sounds';
 
 export default class Invader {
     constructor(type, x, y) {
+        this.config = INVADER.find((inv) => inv.type === type);
         this.type = type;
         this.destroySound = Sounds();
         this.destroySound.startTime = 1.305; // Move this to config file
@@ -19,21 +20,20 @@ export default class Invader {
         this.direction = 'right';
         this.xOffset = (INVADERS.columnWidth - this.width) / 2;
         this.yOffset = (INVADERS.rowHeight - this.height) / 2;
-        this.invaderInfo = INVADER.find((inv) => inv.type === type);
         this.animationFrame = 0;
-        this.noAnimationFrames = this.invaderInfo.noAnimationFrames;
-        this.spriteX = this.invaderInfo.spriteX;
-        this.spriteY = this.invaderInfo.spriteY;
-        this.width = this.invaderInfo.width;
-        this.height = this.invaderInfo.height;
-        this.spriteExplosionX = this.invaderInfo.spriteExplosionX;
-        this.spriteExplosionY = this.invaderInfo.spriteExplosionY;
-        this.spriteExplosionWidth = this.invaderInfo.spriteExplosionWidth;
-        this.spriteExplosionHeight = this.invaderInfo.spriteExplosionHeight;
-        this.explosionFrames = this.invaderInfo.explosionFrames;
+        this.noAnimationFrames = this.config.noAnimationFrames;
+        this.spriteX = this.config.spriteX;
+        this.spriteY = this.config.spriteY;
+        this.width = this.config.width;
+        this.height = this.config.height;
+        this.spriteExplosionX = this.config.spriteExplosionX;
+        this.spriteExplosionY = this.config.spriteExplosionY;
+        this.spriteExplosionWidth = this.config.spriteExplosionWidth;
+        this.spriteExplosionHeight = this.config.spriteExplosionHeight;
+        this.explosionFrames = this.config.explosionFrames;
         this.xSpriteOffset = (INVADERS.columnWidth - this.spriteExplosionWidth) / 2;
         this.ySpriteOffset = (INVADERS.rowHeight - this.spriteExplosionHeight) / 2;
-        this.score = this.invaderInfo.score;
+        this.score = this.config.score;
     }
 
     move(direction) {
@@ -51,7 +51,7 @@ export default class Invader {
     }
 
     destroy() {
-        this.isExploding = 0; // Set exploidng animation frame to 0 instead of false
+        this.isExploding = 0; // Set explodng animation frame to 0 instead of false
         // this.destroySound.play();
     }
 
