@@ -47,7 +47,6 @@ export default class Invaders {
                         y
                     );
                     this.invaderList.push(newInvader);
-                    console.log("Pushing new Invader. Type: ", type, " x:", x, " y:", y, "row:", row, "column:", column);
                 }
             } else {
                 // Stop
@@ -55,8 +54,6 @@ export default class Invaders {
             }
             row++;
         }
-
-        console.log("Invader list", this.invaderList);
 
         // Build move sounds
         this.moveSounds.forEach((moveSound) => {

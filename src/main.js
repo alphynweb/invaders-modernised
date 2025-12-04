@@ -63,7 +63,8 @@ const init = () => {
     invaders = new Invaders(invader_group_y);
     bullets = new Bullets();
     cities = Cities();
-    mothership = Object.assign(Mothership(), MOTHERSHIP);
+    // mothership = Object.assign(Mothership(), MOTHERSHIP);
+    mothership = new Mothership();
     collisionDetector = CollisionDetector(tank, tank);
     inputHandler = InputHandler();
     now = 0;
@@ -156,6 +157,7 @@ const update = (currentTime) => {
 
 const resetMothershipTime = () => {
     mothershipNewTime = Math.floor((Math.random() * 30000) + 10000);
+    // mothershipNewTime = 0;
 }
 
 const purge = () => {
@@ -485,7 +487,8 @@ const gameStates = {
         });
 
         // Mothership
-        const mothership = Object.assign(Mothership(), MOTHERSHIP);
+        // const mothership = Object.assign(Mothership(), MOTHERSHIP);
+        const mothership = new Mothership();
 
         mothership.x = x - 6;
         mothership.y = currentYPos + verticalSpacing + 6;
