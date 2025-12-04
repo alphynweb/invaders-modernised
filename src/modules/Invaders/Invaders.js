@@ -4,6 +4,7 @@ import Sounds from '../Sounds/Sounds';
 
 export default class Invaders {
     constructor(invadersY) {
+        this.config = INVADERS;
         this.moveSounds = SOUNDS.invader.move;
         this.invaderList = [];
         this.moveSounds = [];
