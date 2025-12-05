@@ -59,7 +59,8 @@ const init = () => {
     gameLoop = null;
     score = Score();
     lives = Lives();
-    tank = Object.assign(Tank(), TANK);
+    // tank = Object.assign(Tank(), TANK);
+    tank = new Tank();
     invaders = new Invaders(invader_group_y);
     bullets = new Bullets();
     cities = new Cities();
