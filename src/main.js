@@ -62,7 +62,7 @@ const init = () => {
     tank = Object.assign(Tank(), TANK);
     invaders = new Invaders(invader_group_y);
     bullets = new Bullets();
-    cities = Cities();
+    cities = new Cities();
     // mothership = Object.assign(Mothership(), MOTHERSHIP);
     mothership = new Mothership();
     collisionDetector = CollisionDetector(tank, tank);
