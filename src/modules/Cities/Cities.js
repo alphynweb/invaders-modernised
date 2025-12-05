@@ -1,49 +1,53 @@
 import { CITY, SCREEN } from '../../config';
 import City from '../City/City';
 
-const cities = () => {
-    return {
-        cityList: [],
-        build: function () {
-            this.cityList = [];
-            const cityArea = SCREEN.width - (CITY.indent * 2); // Horizontal area cities take up
-            const cityGap = (cityArea - (CITY.no * CITY.width)) / (CITY.no - 1);
+export default class Cities {
+    constructor() {
+        this.cityConfig = CITY;
+        this.screenConfig = SCREEN;
+        this.cityList = [];
+        this.noOfCities = this.cityConfig.no;
+        this.cityWidth = this.cityConfig.width;
+        this.cityXArea = this.screenConfig.width - (this.cityConfig.indent * 2); // Horizontal area that city takes up
+        this.cityGap = (this.cityXArea - (this.noOfCities * this.cityWidth)) / (this.noOfCities - 1);
+        this.gameArea = document.querySelector('#gameArea');
+    }
 
-            for (let i = 0; i < CITY.no; i++) {
+    build() {
+        for (let i = 0; i < this.noOfCities; i++) {
 
-                const gameArea = document.getElementById('gameArea');
+            const gameArea = document.getElementById('gameArea');
 
-                // Work out x coord for city based on no of cities and city gap
-                const cityX = (i * CITY.width) + (i * cityGap) + CITY.indent;
+            // Work out x coord for city based on no of cities and city gap
+            const cityX = (i * this.cityConfig.width) + (i * this.cityGap) + this.cityConfig.indent;
 
-                // Build a seperate canvas for the city
-                const cityCanvas = document.createElement('canvas');
-                cityCanvas.id = 'cityCanvas' + i;
-                cityCanvas.width = CITY.width;
-                cityCanvas.height = CITY.height;
-                cityCanvas.style.position = "absolute";
-                cityCanvas.style.top = (CITY.y) + "px";
-                cityCanvas.style.left = cityX + "px";
-                cityCanvas.style.zIndex = "999";
+            // Build a seperate canvas for the city
+            const cityCanvas = document.createElement('canvas');
+            cityCanvas.id = 'cityCanvas' + i;
+            cityCanvas.width = CITY.width;
+            cityCanvas.height = CITY.height;
+            cityCanvas.style.position = "absolute";
+            cityCanvas.style.top = (CITY.y) + "px";
+            cityCanvas.style.left = cityX + "px";
+            cityCanvas.style.zIndex = "999";
 
-                gameArea.appendChild(cityCanvas);
+            gameArea.appendChild(cityCanvas);
 
-                const newCity = Object.assign(City(cityX, cityCanvas.id), CITY);
+            const newCity = new City(cityCanvas.id, cityX);
 
-                this.cityList.push(newCity);
-            }
-        },
-        clear: function () {
-            this.cityList.forEach((city) => {
-                city.clear();
-            });
-        },
-        render: function () {
-            this.cityList.forEach((city) => {
-                city.render();
-            });
+            this.cityList.push(newCity);
         }
-    };
-};
+    }
 
-export default cities;
+    clear() {
+        this.cityList.forEach((city) => {
+            city.clear();
+        });
+    }
+
+    render() {
+        this.cityList.forEach((city) => {
+            city.render();
+        });
+    }
+}

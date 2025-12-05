@@ -19,7 +19,13 @@ const collisionDetector = (obj1, obj2) => {
         obj2Left: obj2.x,
 
         collisionInfo: function () {
-            const didCollide = this.obj1.x < this.obj2.x + this.obj2.width && this.obj1.x + this.obj1.width > this.obj2.x && this.obj1.y < this.obj2.y + this.obj2.height && this.obj1.y + this.obj1.height > this.obj2.y;
+            const didCollide =
+                // Within horizontal boundaries
+                this.obj1.x < this.obj2.x + this.obj2.width && 
+                this.obj1.x + this.obj1.width > this.obj2.x &&
+                // Within vertical bounderies
+                this.obj1.y < this.obj2.y + this.obj2.height &&
+                this.obj1.y + this.obj1.height > this.obj2.y;
             let collidingSides = [];
 
             if (didCollide) {
