@@ -27,18 +27,13 @@ export default class Tank {
     }
 
     move(currentKeysPressed) {
-        const isLeftKey = currentKeysPressed.findIndex((key) => {
-            return key === 37;
-        });
-        const isRightKey = currentKeysPressed.findIndex((key) => {
-            return key === 39;
-        });
-        if (isLeftKey > -1) {
+        if (currentKeysPressed.indexOf('ArrowLeft') !== -1) {
             if (this.x > 0) {
                 this.x -= this.speed;
             }
         }
-        if (isRightKey > -1) {
+
+        if (currentKeysPressed.indexOf('ArrowRight') !== -1) {
             if (this.x < this.screenConfig.width - this.width) {
                 this.x += this.speed;
             }

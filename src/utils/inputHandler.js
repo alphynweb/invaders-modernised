@@ -1,29 +1,44 @@
+class InputHandler {
+    constructor() {
+        this.currentKeysPressed = [];
+        this.isInitialised = false;
+    }
 
-
-const inputHandler = () => {
-    const inputHandler = {
-        currentKeysPressed: [],
-        init: function () {
-            document.addEventListener('keydown', (event) => {
-                event.preventDefault();
-                var keyIndex = this.currentKeysPressed.findIndex((key) => {
-                    return key === event.keyCode;
-                });
-                if (keyIndex === -1) {
-                    this.currentKeysPressed.push(event.keyCode);
-                }
-            });
-            document.addEventListener('keyup', (event) => {
-                var keyIndex = this.currentKeysPressed.findIndex((key) => {
-                    return key === event.keyCode;
-                });
-                this.currentKeysPressed.splice(keyIndex, 1);
-            });
+    init() {
+        if (this.isInitialised) {
+            return;
         }
-    };
 
-    inputHandler.init();
-    return inputHandler;
-};
+        this.isInitialised = true;
 
+        document.addEventListener('keydown', (event) => {
+            const keyCode = event.code;
+
+            // prevent default for game keys
+            const gameKeys = ['ArrowLeft', 'ArrowRight', 'Space'];
+
+            if (gameKeys.includes(keyCode)) {
+                event.preventDefault();
+            }
+
+            if (!this.currentKeysPressed.includes(keyCode)) {
+                this.currentKeysPressed.push(keyCode);
+            }
+        });
+        document.addEventListener('keyup', (event) => {
+            const keyCode = event.code;
+            const keyIndex = this.currentKeysPressed.indexOf(keyCode);
+
+            if (keyIndex !== -1) {
+                this.currentKeysPressed.splice(keyIndex, 1);
+            }
+        });
+    }
+
+    isKeyPressed(keyCode) {
+        return this.currentKeysPressed.includes(keyCode);
+    }
+}
+
+const inputHandler = new InputHandler();
 export default inputHandler;

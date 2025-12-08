@@ -7,7 +7,7 @@ import gameSounds from './assets/audio/gamesounds.mp3';
 
 //Utils
 import CollisionDetector from './utils/CollisionDetector';
-import InputHandler from './utils/InputHandler';
+import inputHandler from './utils/inputHandler';
 
 // Modules
 import Screen from './modules/Screen/Screen';
@@ -40,7 +40,6 @@ let mothershipOldTime = 0;
 let mothershipNewTime;
 let collisionDetector;
 let collisionInfo;
-let inputHandler;
 let now = 0;
 let invaderMoveTime = INVADERS.moveTime;
 let isTankBullet = false;
@@ -67,7 +66,7 @@ const init = () => {
     // mothership = Object.assign(Mothership(), MOTHERSHIP);
     mothership = new Mothership();
     collisionDetector = CollisionDetector(tank, tank);
-    inputHandler = InputHandler();
+    inputHandler.init();
     now = 0;
     invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
 
@@ -89,15 +88,11 @@ const update = (currentTime) => {
     bullets.move();
 
     // If spacebar was pressed, then create new bullet
-    let isBulletKeyPressed = inputHandler.currentKeysPressed.findIndex((key) => {
-        return key === 32;
-    });
-    if (isBulletKeyPressed > -1) {
+    if (inputHandler.isKeyPressed('Space')) {
         isTankBullet = bullets.bulletList.find((bullet) => {
             return bullet.type === 'tank';
         });
         if (!isTankBullet) {
-            // bullets.addBullet("tank", null, tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2), tank.y - TANK.bulletInfo.height);
             bulletType = "tank";
             bulletSubType = null;
             bulletX = tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2);
