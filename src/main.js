@@ -6,7 +6,7 @@ import gameSprite from './assets/images/sprite-2.png';
 import gameSounds from './assets/audio/gamesounds.mp3';
 
 //Utils
-import CollisionDetector from './utils/CollisionDetector';
+import collisionDetector from './utils/CollisionDetector';
 import inputHandler from './utils/inputHandler';
 
 // Modules
@@ -38,7 +38,6 @@ let cities;
 let mothership;
 let mothershipOldTime = 0;
 let mothershipNewTime;
-let collisionDetector;
 let collisionInfo;
 let now = 0;
 let invaderMoveTime = INVADERS.moveTime;
@@ -65,7 +64,7 @@ const init = () => {
     cities = new Cities();
     // mothership = Object.assign(Mothership(), MOTHERSHIP);
     mothership = new Mothership();
-    collisionDetector = CollisionDetector(tank, tank);
+    // collisionDetector = CollisionDetector(tank, tank);
     inputHandler.init();
     now = 0;
     invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
@@ -187,7 +186,7 @@ const handleTankBulletCollisions = () => {
         // Tank bullet vs invaders
         for (let i = 0; i < invaders.invaderList.length; i++) {
             collisionDetector.obj2 = invaderHit = invaders.invaderList[i];
-            collisionInfo = collisionDetector.collisionInfo();
+            collisionInfo = collisionDetector.collisionInfo(tankBullet, invaderHit);
 
             if (collisionInfo.didCollide) {
                 if (!invaderHit.isExploding) {
@@ -203,8 +202,8 @@ const handleTankBulletCollisions = () => {
         // Tank bulllet vs cities
         for (let i = 0; i < CITY.no; i++) {
             const cityHit = cities.cityList[i];
-            collisionDetector.obj2 = cityHit;
-            collisionInfo = collisionDetector.collisionInfo();
+            // collisionDetector.obj2 = cityHit;
+            collisionInfo = collisionDetector.collisionInfo(tankBullet, cityHit);
 
             if (collisionInfo.didCollide) {
                 // Check the area directly above the bullet to see whether it's solid
@@ -233,8 +232,8 @@ const handleTankBulletCollisions = () => {
 
         // Tank bullet vs mothership
         if (mothership.isActive) {
-            collisionDetector.obj2 = mothership;
-            collisionInfo = collisionDetector.collisionInfo();
+            // collisionDetector.obj2 = mothership;
+            collisionInfo = collisionDetector.collisionInfo(tankBullet, mothership);
 
             if (collisionInfo.didCollide) {
                 mothership.destroy();
@@ -249,7 +248,7 @@ const handleTankBulletCollisions = () => {
 const handleInvaderBulletCollisions = () => {
     // Collision detector for invader bullets
     if (bullets.bulletList.length) {
-        let invaderBullet; // Current invader bullet to check
+        // let invaderBullet; // Current invader bullet to check
         // let invaderBulletHeight;
         // let invaderBulletWidth;
         let invaderType;
@@ -268,11 +267,12 @@ const handleInvaderBulletCollisions = () => {
             if (bullet.type === 'invader') {
                 invaderType = INVADER.find((inv) => inv.type === bullet.subType);
                 bulletInfo = invaderType.bulletInfo;
-                collisionDetector.obj1 = bullet;
+                // collisionDetector.obj1 = bullet;
 
                 // Invader bullet vs tank
-                collisionDetector.obj2 = tank;
-                collisionInfo = collisionDetector.collisionInfo();
+                // collisionDetector.obj2 = tank;
+
+                collisionInfo = collisionDetector.collisionInfo(bullet, tank);
 
                 if (collisionInfo.didCollide && !tank.isAnimating) {
                     // The invaders pause and the tank appears on the left hand side of the screen again
@@ -292,8 +292,8 @@ const handleInvaderBulletCollisions = () => {
                 // Invader bullet vs cities
                 for (let i = 0; i < CITY.no; i++) {
                     cityHit = cities.cityList[i];
-                    collisionDetector.obj2 = cityHit;
-                    collisionInfo = collisionDetector.collisionInfo();
+                    // collisionDetector.obj2 = cityHit;
+                    collisionInfo = collisionDetector.collisionInfo(bullet, cityHit);
 
                     if (collisionInfo.didCollide) {
 
@@ -325,9 +325,9 @@ const handleInvaderBulletCollisions = () => {
 const handleMothershipBulletCollisions = () => {
     bullets.bulletList.forEach((bullet, index) => {
         if (bullet.type === 'mothership') {
-            collisionDetector.obj1 = bullet;
-            collisionDetector.obj2 = tank;
-            collisionInfo = collisionDetector.collisionInfo();
+            // collisionDetector.obj1 = bullet;
+            // collisionDetector.obj2 = tank;
+            collisionInfo = collisionDetector.collisionInfo(bullet, tank);
 
             if (collisionInfo.didCollide && !tank.isAnimating) {
                 // The invaders pause and the tank appears on the left hand side of the screen again
