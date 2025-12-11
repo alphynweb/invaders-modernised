@@ -20,9 +20,10 @@ import Mothership from './modules/Mothership/Mothership';
 import Score from './modules/Score/Score';
 import Lives from './modules/Lives/Lives';
 import Button from './modules/Button/Button';
+import GameLoop from './GameLoop';
 
 let livesLeft;
-let gameLoop;
+// let gameLoop;
 const screen = Screen();
 screen.render();
 let score;
@@ -54,17 +55,14 @@ const init = () => {
     // Set up initial assignment of variables
     invader_group_y = INVADERS.y;
     livesLeft = LIVES.lives;
-    gameLoop = null;
+    // gameLoop = null;
     score = Score();
     lives = Lives();
-    // tank = Object.assign(Tank(), TANK);
     tank = new Tank();
     invaders = new Invaders(invader_group_y);
     bullets = new Bullets();
     cities = new Cities();
-    // mothership = Object.assign(Mothership(), MOTHERSHIP);
     mothership = new Mothership();
-    // collisionDetector = CollisionDetector(tank, tank);
     inputHandler.init();
     now = 0;
     invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
@@ -75,11 +73,6 @@ const init = () => {
     invaders.build(invader_group_y);
     cities.build();
     resetMothershipTime();
-};
-
-const loop = (currentTime) => {
-    gameLoop = requestAnimationFrame(loop);
-    gameStates.currentState(currentTime);
 };
 
 const update = (currentTime) => {
@@ -417,7 +410,7 @@ const startGame = () => {
     init();
     cities.render();
     gameStates.currentState = gameStates.runGame;
-    gameLoop = requestAnimationFrame(loop);
+    gameLoop.start();
 }
 
 // Preload files
@@ -530,8 +523,8 @@ const gameStates = {
         });
     },
     runGame: function (currentTime) {
-        update(currentTime);
-        render();
+        gameLoop.update(currentTime);
+        gameLoop.render();
     },
     finishLevel: function () {
         // Implement short pause then re-setup invaders  and cities
@@ -591,10 +584,4 @@ const gameStates = {
     }
 };
 
-
-// init();
-// gameStates.currentState = gameStates.introScreen;
-// gameStates.currentState();
-
-
-
+const gameLoop = new GameLoop(update, render, gameStates);
