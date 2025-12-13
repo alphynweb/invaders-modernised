@@ -21,6 +21,10 @@ import Score from './modules/Score/Score';
 import Lives from './modules/Lives/Lives';
 import Button from './modules/Button/Button';
 import GameLoop from './GameLoop';
+import GameStates from './controllers/GameStates';
+import button from './modules/Button/Button';
+
+
 
 let livesLeft;
 // let gameLoop;
@@ -47,7 +51,9 @@ let invader_group_y;
 let currentLevel = 1;
 
 const screenCanvas = document.getElementById('screenCanvas');
-const startButton = Button(100, 200, 200, 60, 'START', '#0f0', 'startButton', 'button');
+
+
+
 
 
 // Initialise everything needed for new game
@@ -406,6 +412,7 @@ const checkStartButttonHit = (event) => {
 };
 
 const startGame = () => {
+    console.log("Starting game");
     screenCanvas.removeEventListener('click', startGame);
     init();
     cities.render();
@@ -429,159 +436,286 @@ img.onload = () => {
 };
 img.src = gameSprite;
 
+function onTick(currentTime) {
+    // Trigger the appropriate gamestate
+    gameStates.currentState(currentTime);
+}
 
+const finishLevel = () => {
+    // Implement short pause then re-setup invaders  and cities
+
+    // Implement short pause
+
+    // Setup invaders again - lower the y coord
+    invader_group_y += INVADER.rowHeight;
+
+    // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
+    if (invader_group_y > INVADERS.maxY) {
+        invader_group_y = INVADERS.y;
+        currentLevel += 1;
+        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+    } else {
+        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+    }
+
+    invaders.build(invader_group_y);
+
+    invaders.direction = 'right';
+    // Setup cities again
+    cities.build();
+    cities.render();
+
+    // Reset tank
+    tank.reset();
+
+    // Run game again
+    gameStates.currentState = gameStates.runGame;
+}
+
+const renderIntroScreen = () => {
+    screen.ctx.fillStyle = 'white';
+    // Render Score
+    screen.ctx.font = GAME_TEXT.font;
+
+    const x = 300;
+    const textX = 600;
+    const verticalSpacing = 60;
+
+    let currentYPos = 0;
+
+    INVADER.forEach((invader, index) => {
+        const y = (index + 1) * verticalSpacing;
+        const type = invader.type;
+        const invaderInfo = invader;
+        const introInvader = new Invader(
+            type,
+            null,
+            null,
+            x,
+            y,
+            null
+        )
+        // introInvader.width = invader.width;
+        // introInvader.height = invader.height;
+        introInvader.x = x;
+        introInvader.y = y;
+        introInvader.spriteX = invader.spriteX;
+        introInvader.spriteY = invader.spriteY;
+        introInvader.score = invader.score;
+
+
+        // Render invader
+        introInvader.render();
+
+        // Render text
+        screen.ctx.fillText("Score " + introInvader.score, textX, (index + 1) * verticalSpacing + introInvader.height);
+
+        currentYPos = (index + 1) * verticalSpacing;
+    });
+
+    // Mothership
+    // const mothership = Object.assign(Mothership(), MOTHERSHIP);
+    const mothership = new Mothership();
+
+    mothership.x = x - 6;
+    mothership.y = currentYPos + verticalSpacing + 6;
+    mothership.isActive = true;
+
+    mothership.render();
+
+    screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
+
+    const startButton = button(400, 600, 200, 50, 'Start', '#fff', 'startButton', null);
+
+    startButton.render();
+
+    // Instructions
+
+    let instructionsY = 550;
+
+    screen.ctx.font = GAME_TEXT.introScreenArrowFont;
+
+    screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
+
+    screen.ctx.font = GAME_TEXT.font;
+
+    screen.ctx.fillText("Move tank left", textX, instructionsY);
+
+    instructionsY += verticalSpacing;
+
+    screen.ctx.font = GAME_TEXT.introScreenArrowFont;
+
+    screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
+
+    screen.ctx.font = GAME_TEXT.font;
+
+    screen.ctx.fillText("Move tank right", textX, instructionsY);
+
+    instructionsY += verticalSpacing;
+
+    screen.ctx.fillText("Space bar", x, instructionsY);
+
+    screen.ctx.fillText("Fire", textX, instructionsY);
+
+    document.getElementById('startButton').addEventListener('click', function () {
+        this.classList.add('hide');
+        startGame();
+    });
+}
 
 // Controls different game states
-const gameStates = {
-    currentState: null,
-    introScreen: function () {
-        screen.ctx.fillStyle = 'white';
-        // Render Score
-        screen.ctx.font = GAME_TEXT.font;
+// const gameStates = {
+//     currentState: null,
+//     introScreen: function () {
+//         screen.ctx.fillStyle = 'white';
+//         // Render Score
+//         screen.ctx.font = GAME_TEXT.font;
 
-        const x = 300;
-        const textX = 600;
-        const verticalSpacing = 60;
+//         const x = 300;
+//         const textX = 600;
+//         const verticalSpacing = 60;
 
-        let currentYPos = 0;
+//         let currentYPos = 0;
 
-        INVADER.forEach((invader, index) => {
-            const y = (index + 1) * verticalSpacing;
-            const type = invader.type;
-            const invaderInfo = invader;
-            const introInvader = new Invader(
-                type,
-                null,
-                null,
-                x,
-                y,
-                null
-            )
-            // introInvader.width = invader.width;
-            // introInvader.height = invader.height;
-            introInvader.x = x;
-            introInvader.y = y;
-            introInvader.spriteX = invader.spriteX;
-            introInvader.spriteY = invader.spriteY;
-            introInvader.score = invader.score;
+//         INVADER.forEach((invader, index) => {
+//             const y = (index + 1) * verticalSpacing;
+//             const type = invader.type;
+//             const invaderInfo = invader;
+//             const introInvader = new Invader(
+//                 type,
+//                 null,
+//                 null,
+//                 x,
+//                 y,
+//                 null
+//             )
+//             // introInvader.width = invader.width;
+//             // introInvader.height = invader.height;
+//             introInvader.x = x;
+//             introInvader.y = y;
+//             introInvader.spriteX = invader.spriteX;
+//             introInvader.spriteY = invader.spriteY;
+//             introInvader.score = invader.score;
 
 
-            // Render invader
-            introInvader.render();
+//             // Render invader
+//             introInvader.render();
 
-            // Render text
-            screen.ctx.fillText("Score " + introInvader.score, textX, (index + 1) * verticalSpacing + introInvader.height);
+//             // Render text
+//             screen.ctx.fillText("Score " + introInvader.score, textX, (index + 1) * verticalSpacing + introInvader.height);
 
-            currentYPos = (index + 1) * verticalSpacing;
-        });
+//             currentYPos = (index + 1) * verticalSpacing;
+//         });
 
-        // Mothership
-        // const mothership = Object.assign(Mothership(), MOTHERSHIP);
-        const mothership = new Mothership();
+//         // Mothership
+//         // const mothership = Object.assign(Mothership(), MOTHERSHIP);
+//         const mothership = new Mothership();
 
-        mothership.x = x - 6;
-        mothership.y = currentYPos + verticalSpacing + 6;
-        mothership.isActive = true;
+//         mothership.x = x - 6;
+//         mothership.y = currentYPos + verticalSpacing + 6;
+//         mothership.isActive = true;
 
-        mothership.render();
+//         mothership.render();
 
-        screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
+//         screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
 
-        startButton.render();
+//         startButton.render();
 
-        // Instructions
+//         // Instructions
 
-        let instructionsY = 550;
+//         let instructionsY = 550;
 
-        screen.ctx.font = GAME_TEXT.introScreenArrowFont;
+//         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
 
-        screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
+//         screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
 
-        screen.ctx.font = GAME_TEXT.font;
+//         screen.ctx.font = GAME_TEXT.font;
 
-        screen.ctx.fillText("Move tank left", textX, instructionsY);
+//         screen.ctx.fillText("Move tank left", textX, instructionsY);
 
-        instructionsY += verticalSpacing;
+//         instructionsY += verticalSpacing;
 
-        screen.ctx.font = GAME_TEXT.introScreenArrowFont;
+//         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
 
-        screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
+//         screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
 
-        screen.ctx.font = GAME_TEXT.font;
+//         screen.ctx.font = GAME_TEXT.font;
 
-        screen.ctx.fillText("Move tank right", textX, instructionsY);
+//         screen.ctx.fillText("Move tank right", textX, instructionsY);
 
-        instructionsY += verticalSpacing;
+//         instructionsY += verticalSpacing;
 
-        screen.ctx.fillText("Space bar", x, instructionsY);
+//         screen.ctx.fillText("Space bar", x, instructionsY);
 
-        screen.ctx.fillText("Fire", textX, instructionsY);
+//         screen.ctx.fillText("Fire", textX, instructionsY);
 
-        document.getElementById('startButton').addEventListener('click', function () {
-            this.classList.add('hide');
-            startGame();
-        });
-    },
-    runGame: function (currentTime) {
-        gameLoop.update(currentTime);
-        gameLoop.render();
-    },
-    finishLevel: function () {
-        // Implement short pause then re-setup invaders  and cities
+//         document.getElementById('startButton').addEventListener('click', function () {
+//             this.classList.add('hide');
+//             startGame();
+//         });
+//     },
+//     runGame: function (currentTime) {
+//         gameLoop.update(currentTime);
+//         gameLoop.render();
+//     },
+//     finishLevel: function () {
+//         // Implement short pause then re-setup invaders  and cities
 
-        // Implement short pause
+//         // Implement short pause
 
-        // Setup invaders again - lower the y coord
-        invader_group_y += INVADERS.rowHeight;
+//         // Setup invaders again - lower the y coord
+//         invader_group_y += INVADERS.rowHeight;
 
-        // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
-        if (invader_group_y > INVADERS.maxY) {
-            invader_group_y = INVADERS.y;
-            currentLevel += 1;
-            invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-        } else {
-            invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-        }
+//         // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
+//         if (invader_group_y > INVADERS.maxY) {
+//             invader_group_y = INVADERS.y;
+//             currentLevel += 1;
+//             invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+//         } else {
+//             invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+//         }
 
-        invaders.build(invader_group_y);
+//         invaders.build(invader_group_y);
 
-        invaders.direction = 'right';
-        // Setup cities again
-        cities.build();
-        cities.render();
+//         invaders.direction = 'right';
+//         // Setup cities again
+//         cities.build();
+//         cities.render();
 
-        // Reset tank
-        tank.reset();
+//         // Reset tank
+//         tank.reset();
 
-        // Run game again
-        this.currentState = this.runGame;
-    },
-    loseLife: function (currentTime) {
-        // Check to see if tank destroy animation has finished
-        if (!tank.animationType) {
-            this.currentState = this.runGame;
-            tank.reset();
-        }
-        tank.render();
-        // Reset the tank (to left hand side of screen)
-        // Start the game again
-    },
-    gameOver: function () {
-        cancelAnimationFrame(gameLoop);
-        screen.clear();
-        cities.clear();
-        screen.ctx.fillStyle = 'white';
-        // Render Score
-        screen.ctx.font = GAME_TEXT.font;
-        screen.ctx.fillText("GAME OVER", 10, 30);
-        screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
-        // Click canvas to start new game
-        document.getElementById('startButton').classList.remove('hide').addEventListener('click', function () {
-            this.classList.add('hide');
-            startGame();
-        });
-        screenCanvas.addEventListener('click', checkStartButttonHit());
-    }
-};
+//         // Run game again
+//         this.currentState = this.runGame;
+//     },
+//     loseLife: function (currentTime) {
+//         // Check to see if tank destroy animation has finished
+//         if (!tank.animationType) {
+//             this.currentState = this.runGame;
+//             tank.reset();
+//         }
+//         tank.render();
+//         // Reset the tank (to left hand side of screen)
+//         // Start the game again
+//     },
+//     gameOver: function () {
+//         cancelAnimationFrame(gameLoop);
+//         screen.clear();
+//         cities.clear();
+//         screen.ctx.fillStyle = 'white';
+//         // Render Score
+//         screen.ctx.font = GAME_TEXT.font;
+//         screen.ctx.fillText("GAME OVER", 10, 30);
+//         screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
+//         // Click canvas to start new game
+//         document.getElementById('startButton').classList.remove('hide').addEventListener('click', function () {
+//             this.classList.add('hide');
+//             startGame();
+//         });
+//         screenCanvas.addEventListener('click', checkStartButttonHit());
+//     }
+// };
 
-const gameLoop = new GameLoop(update, render, gameStates);
+const gameStates = new GameStates(update, render, startGame, finishLevel, renderIntroScreen);
+
+const gameLoop = new GameLoop(onTick);

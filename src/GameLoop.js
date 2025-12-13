@@ -1,13 +1,13 @@
 export default class GameLoop {
-    constructor(update, render, gameStates) {
-        this.update = update;
-        this.render = render;
-        this.gameStates = gameStates;
-        this.gameLoop = null;
+    constructor(onTick) {
+        this.rafId = null;
         this.prevFrameTime = 0;
-        this.fps = 300;
+        this.fps = 60;
         this.frameDuration = 1000 / this.fps;
         this.delta = 0;
+
+        // Functions passed in from main Game class
+        this.onTick = onTick;
     }
 
     start() {
@@ -16,15 +16,16 @@ export default class GameLoop {
 
             if (this.delta >= this.frameDuration) {
                 this.prevFrameTime = currentTime;
-                this.gameStates.currentState(currentTime);
+                // this.gameStates.currentState(currentTime);
+                this.onTick(currentTime);
             }
 
-            this.gameLoop = requestAnimationFrame(loop);
+            this.rafId = requestAnimationFrame(loop);
         }
         requestAnimationFrame(loop);
     }
 
     stop() {
-        cancelAnimationFrame(this.gameLoop);
+        cancelAnimationFrame(this.rafId);
     }
 }
