@@ -52,7 +52,7 @@ let currentLevel = 1;
 
 const screenCanvas = document.getElementById('screenCanvas');
 
-
+const startButton = Button(100, 200, 200, 60, 'START', '#0f0', 'startButton', 'button');
 
 
 
@@ -128,7 +128,7 @@ const update = (currentTime) => {
         // Check for invaders reaching bottom of screen
         invaders.invaderList.forEach((invader) => {
             if (invader.y + invader.height > TANK.y) {
-                gameStates.currentState = gameStates.gameOver;
+                gameStates.currentState = gameStates.over;
             }
         });
     }
@@ -159,7 +159,7 @@ const purge = () => {
     mothership.purge(); // Get rid of mothership if destroyed
 
     if (invaders.invaderList.length < 1) {
-        gameStates.currentState = gameStates.finishLevel;
+        gameStates.currentState = gameStates.finish;
     }
 };
 
@@ -277,14 +277,14 @@ const handleInvaderBulletCollisions = () => {
                     // The invaders pause and the tank appears on the left hand side of the screen again
                     // All the invader bullets are deleted
                     // The game pauses while the tank destroy animate happens
-                    gameStates.currentState = gameStates.loseLife;
+                    gameStates.currentState = gameStates.lose;
 
                     inputHandler.currentKeysPressed = []; // Clear out the input handler info
                     bullets.removeBullet(index);
                     tank.destroy();
                     lives.loseLife();
                     if (lives.currentLives === 0) {
-                        gameStates.currentState = gameStates.gameOver;
+                        gameStates.currentState = gameStates.over;
                         return;
                     }
                 }
@@ -332,14 +332,14 @@ const handleMothershipBulletCollisions = () => {
                 // The invaders pause and the tank appears on the left hand side of the screen again
                 // All the invader bullets are deleted
                 // The game pauses while the tank destroy animate happens
-                gameStates.currentState = gameStates.loseLife;
+                gameStates.currentState = gameStates.lose;
 
                 inputHandler.currentKeysPressed = []; // Clear out the input handler info
                 bullets.removeBullet(index);
                 tank.destroy();
                 lives.loseLife();
                 if (lives.currentLives === 0) {
-                    gameStates.currentState = gameStates.gameOver;
+                    gameStates.currentState = gameStates.over;
                     return;
                 }
             }
@@ -416,10 +416,14 @@ const startGame = () => {
     screenCanvas.removeEventListener('click', startGame);
     init();
     cities.render();
-    gameStates.currentState = gameStates.runGame;
+    gameStates.currentState = gameStates.run;
     gameLoop.start();
-}
+};
 
+const runGame = (currentTime) => {
+    update(currentTime);
+    render();
+};
 // Preload files
 const img = new Image();
 
@@ -430,16 +434,13 @@ img.onload = () => {
     sounds.oncanplaythrough = () => {
         console.log("Sounds loaded");
         init();
-        gameStates.currentState = gameStates.introScreen;
+        gameStates.currentState = gameStates.intro;
         gameStates.currentState();
     };
 };
 img.src = gameSprite;
 
-function onTick(currentTime) {
-    // Trigger the appropriate gamestate
-    gameStates.currentState(currentTime);
-}
+
 
 const finishLevel = () => {
     // Implement short pause then re-setup invaders  and cities
@@ -469,10 +470,10 @@ const finishLevel = () => {
     tank.reset();
 
     // Run game again
-    gameStates.currentState = gameStates.runGame;
+    gameStates.currentState = gameStates.run;
 }
 
-const renderIntroScreen = () => {
+const introScreen = () => {
     screen.ctx.fillStyle = 'white';
     // Render Score
     screen.ctx.font = GAME_TEXT.font;
@@ -525,8 +526,6 @@ const renderIntroScreen = () => {
 
     screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
 
-    const startButton = button(400, 600, 200, 50, 'Start', '#fff', 'startButton', null);
-
     startButton.render();
 
     // Instructions
@@ -561,6 +560,37 @@ const renderIntroScreen = () => {
         this.classList.add('hide');
         startGame();
     });
+}
+
+const handleLevelFinished = () => {
+    // Implement short pause then re-setup invaders  and cities
+
+    // Implement short pause
+
+    // Setup invaders again - lower the y coord
+    invader_group_y += INVADERS.rowHeight;
+
+    // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
+    if (invader_group_y > INVADERS.maxY) {
+        invader_group_y = INVADERS.y;
+        currentLevel += 1;
+        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+    } else {
+        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+    }
+
+    invaders.build(invader_group_y);
+
+    invaders.direction = 'right';
+    // Setup cities again
+    cities.build();
+    cities.render();
+
+    // Reset tank
+    tank.reset();
+
+    // Run game again
+    gameStates.currentState = gameStates.run;
 }
 
 // Controls different game states
@@ -688,34 +718,37 @@ const renderIntroScreen = () => {
 //         // Run game again
 //         this.currentState = this.runGame;
 //     },
-//     loseLife: function (currentTime) {
-//         // Check to see if tank destroy animation has finished
-//         if (!tank.animationType) {
-//             this.currentState = this.runGame;
-//             tank.reset();
-//         }
-//         tank.render();
-//         // Reset the tank (to left hand side of screen)
-//         // Start the game again
-//     },
-//     gameOver: function () {
-//         cancelAnimationFrame(gameLoop);
-//         screen.clear();
-//         cities.clear();
-//         screen.ctx.fillStyle = 'white';
-//         // Render Score
-//         screen.ctx.font = GAME_TEXT.font;
-//         screen.ctx.fillText("GAME OVER", 10, 30);
-//         screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
-//         // Click canvas to start new game
-//         document.getElementById('startButton').classList.remove('hide').addEventListener('click', function () {
-//             this.classList.add('hide');
-//             startGame();
-//         });
-//         screenCanvas.addEventListener('click', checkStartButttonHit());
-//     }
+const loseLife = (currentTime) => {
+    // Check to see if tank destroy animation has finished
+    if (!tank.animationType) {
+        gameStates.currentState = gameStates.run;
+        tank.reset();
+    }
+    tank.render();
+}
+
 // };
 
-const gameStates = new GameStates(update, render, startGame, finishLevel, renderIntroScreen);
+const gameOver = () => {
+    cancelAnimationFrame(gameLoop);
+    screen.clear();
+    cities.clear();
+    screen.ctx.fillStyle = 'white';
+    // Render Score
+    screen.ctx.font = GAME_TEXT.font;
+    screen.ctx.fillText("GAME OVER", 10, 30);
+    screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
+    // Click canvas to start new game
+    document.getElementById('startButton').classList.remove('hide').addEventListener('click', function () {
+        this.classList.add('hide');
+        startGame();
+    });
+    screenCanvas.addEventListener('click', checkStartButttonHit());
+}
 
+function onTick(currentTime) {
+    gameStates.currentState(currentTime);
+}
 const gameLoop = new GameLoop(onTick);
+
+const gameStates = new GameStates(introScreen, startGame, runGame, finishLevel, loseLife, gameOver);

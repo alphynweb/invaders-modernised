@@ -16,7 +16,6 @@ export default class GameLoop {
 
             if (this.delta >= this.frameDuration) {
                 this.prevFrameTime = currentTime;
-                // this.gameStates.currentState(currentTime);
                 this.onTick(currentTime);
             }
 

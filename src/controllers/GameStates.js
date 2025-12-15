@@ -1,47 +1,33 @@
-import { INVADER, MOTHERSHIP, TANK, CITY, GAME_TEXT } from '../config.js';
-import Button from '../modules/Button/Button';
-import Screen from '../modules/Screen/Screen';
-import Invader from '../modules/Invader/Invader';
-import Mothership from '../modules/Mothership/Mothership';
-
 export default class GameStates {
-    constructor(update, render, startGame, finishLevel, renderIntroScreen) {
-        this.currentState = this.introscreen;
-        this.screen = Screen();
-        this.invaderConfig = INVADER;
-        this.mothershipConfig = MOTHERSHIP;
-        this.tankConfig = TANK;
-        this.cityConfig = CITY;
-        this.gameTextConfig = GAME_TEXT;
-        this.canvas = document.querySelector('#screenCanvas');
-        this.ctx = this.canvas.getContext('2d');
+    constructor(introScreen, startGame, runGame, finishLevel, loseLife, gameOver, ) {
+        this.currentState = this.intro;
 
         // Functions passed in from main Game class
-        this.update = update;
-        this.render = render;
         this.startGame = startGame;
         this.finishLevel = finishLevel;
-        this.renderIntroScreen = renderIntroScreen
+        this.loseLife = loseLife;
+        this.introScreen = introScreen;
+        this.gameOver = gameOver;
+        this.runGame = runGame;
     }
 
-    introScreen = (currentTime) => {
-       this.renderIntroScreen();
+    intro = (currentTime) => {
+        this.introScreen(currentTime);
     }
 
-    runGame(currentTime) {
-        this.update(currentTime);
-        this.render();
+    run = (currentTime) => {
+        this.runGame(currentTime);
     }
 
-    finishLevel(currentTime) {
-        this.finishLevel(); 
+    finish = (currentTime) => {
+        this.finishLevel(currentTime);
     }
 
-    loseLife(currentTime) {
-
+    lose = (currentTime) => {
+        this.loseLife(currentTime);
     }
 
-    gameOver(currentTime) {
-
+    over = (currentTime) => {
+        this.gameOver(currentTime);
     }
 }
