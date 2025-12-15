@@ -24,12 +24,16 @@ import GameLoop from './GameLoop';
 import GameStates from './controllers/GameStates';
 import button from './modules/Button/Button';
 
+import IntroScreen from './states/IntroScreen';
+
 
 
 let livesLeft;
 // let gameLoop;
 const screen = Screen();
 screen.render();
+
+
 let score;
 let lives;
 let tank;
@@ -474,92 +478,7 @@ const finishLevel = () => {
 }
 
 const introScreen = () => {
-    screen.ctx.fillStyle = 'white';
-    // Render Score
-    screen.ctx.font = GAME_TEXT.font;
-
-    const x = 300;
-    const textX = 600;
-    const verticalSpacing = 60;
-
-    let currentYPos = 0;
-
-    INVADER.forEach((invader, index) => {
-        const y = (index + 1) * verticalSpacing;
-        const type = invader.type;
-        const invaderInfo = invader;
-        const introInvader = new Invader(
-            type,
-            null,
-            null,
-            x,
-            y,
-            null
-        )
-        // introInvader.width = invader.width;
-        // introInvader.height = invader.height;
-        introInvader.x = x;
-        introInvader.y = y;
-        introInvader.spriteX = invader.spriteX;
-        introInvader.spriteY = invader.spriteY;
-        introInvader.score = invader.score;
-
-
-        // Render invader
-        introInvader.render();
-
-        // Render text
-        screen.ctx.fillText("Score " + introInvader.score, textX, (index + 1) * verticalSpacing + introInvader.height);
-
-        currentYPos = (index + 1) * verticalSpacing;
-    });
-
-    // Mothership
-    // const mothership = Object.assign(Mothership(), MOTHERSHIP);
-    const mothership = new Mothership();
-
-    mothership.x = x - 6;
-    mothership.y = currentYPos + verticalSpacing + 6;
-    mothership.isActive = true;
-
-    mothership.render();
-
-    screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
-
-    startButton.render();
-
-    // Instructions
-
-    let instructionsY = 550;
-
-    screen.ctx.font = GAME_TEXT.introScreenArrowFont;
-
-    screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
-
-    screen.ctx.font = GAME_TEXT.font;
-
-    screen.ctx.fillText("Move tank left", textX, instructionsY);
-
-    instructionsY += verticalSpacing;
-
-    screen.ctx.font = GAME_TEXT.introScreenArrowFont;
-
-    screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
-
-    screen.ctx.font = GAME_TEXT.font;
-
-    screen.ctx.fillText("Move tank right", textX, instructionsY);
-
-    instructionsY += verticalSpacing;
-
-    screen.ctx.fillText("Space bar", x, instructionsY);
-
-    screen.ctx.fillText("Fire", textX, instructionsY);
-
-    document.getElementById('startButton').addEventListener('click', function () {
-        this.classList.add('hide');
-        startGame();
-    });
+    intro.render();
 }
 
 const handleLevelFinished = () => {
@@ -745,6 +664,8 @@ const gameOver = () => {
     });
     screenCanvas.addEventListener('click', checkStartButttonHit());
 }
+
+const intro = new IntroScreen(startGame);
 
 function onTick(currentTime) {
     gameStates.currentState(currentTime);

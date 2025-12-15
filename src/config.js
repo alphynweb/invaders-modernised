@@ -6,7 +6,8 @@ export const SCREEN = {
 export const GAME_TEXT = {
     y: 40, // Height at which lives and score etc are rendered
     font: 'bold 20px arial',
-    introScreenArrowFont: 'bold 40px arial'
+    introScreenArrowFont: 'bold 40px arial',
+    fillStyle: '#fff'
 };
 
 export const LIVES = {
@@ -60,7 +61,7 @@ export const INVADERS = {
     maxY: 300,
     columnWidth: 50,
     rowHeight: 50,
-    columns: 1,
+    columns: 11,
     columnGap: 5,
     rowGap: 10,
     moveTime: 1000, // Time between movement
