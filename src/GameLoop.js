@@ -11,6 +11,7 @@ export default class GameLoop {
     }
 
     start() {
+        console.log("Starting game loop");
         const loop = (currentTime) => {
             this.delta = currentTime - this.prevFrameTime;
 

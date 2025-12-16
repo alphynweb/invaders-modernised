@@ -56,34 +56,7 @@ let currentLevel = 1;
 
 const screenCanvas = document.getElementById('screenCanvas');
 
-const startButton = Button(100, 200, 200, 60, 'START', '#0f0', 'startButton', 'button');
 
-
-
-// Initialise everything needed for new game
-const init = () => {
-    // Set up initial assignment of variables
-    invader_group_y = INVADERS.y;
-    livesLeft = LIVES.lives;
-    // gameLoop = null;
-    score = Score();
-    lives = Lives();
-    tank = new Tank();
-    invaders = new Invaders(invader_group_y);
-    bullets = new Bullets();
-    cities = new Cities();
-    mothership = new Mothership();
-    inputHandler.init();
-    now = 0;
-    invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-
-    // Set up objects from prototypes (invaders and bullets)
-
-    // Build objects
-    invaders.build(invader_group_y);
-    cities.build();
-    resetMothershipTime();
-};
 
 const update = (currentTime) => {
     purge();
@@ -415,14 +388,7 @@ const checkStartButttonHit = (event) => {
     return event.layerX > startButton.x && event.layerY > startButton.y && event.layerX < (startButton.x + startButton.width) && event.layerY < (startButton.y + startButton.height);
 };
 
-const startGame = () => {
-    console.log("Starting game");
-    screenCanvas.removeEventListener('click', startGame);
-    init();
-    cities.render();
-    gameStates.currentState = gameStates.run;
-    gameLoop.start();
-};
+
 
 const runGame = (currentTime) => {
     update(currentTime);
@@ -437,7 +403,7 @@ img.onload = () => {
     sounds.preload = true;
     sounds.oncanplaythrough = () => {
         console.log("Sounds loaded");
-        init();
+        // setup();
         gameStates.currentState = gameStates.intro;
         gameStates.currentState();
     };
@@ -477,9 +443,7 @@ const finishLevel = () => {
     gameStates.currentState = gameStates.run;
 }
 
-const introScreen = () => {
-    intro.render();
-}
+
 
 const handleLevelFinished = () => {
     // Implement short pause then re-setup invaders  and cities
@@ -665,11 +629,50 @@ const gameOver = () => {
     screenCanvas.addEventListener('click', checkStartButttonHit());
 }
 
-const intro = new IntroScreen(startGame);
+const introScreen = () => {
+    intro.render();
+}
+
+// Initialise everything needed for new game
+const init = () => {
+    invader_group_y = INVADERS.y;
+    livesLeft = LIVES.lives;
+
+    score = Score();
+    lives = Lives();
+
+    tank = new Tank();
+    invaders = new Invaders(invader_group_y);
+    bullets = new Bullets();
+    cities = new Cities();
+    mothership = new Mothership();
+
+    inputHandler.init();
+
+    now = 0;
+    invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
+
+    invaders.build(invader_group_y);
+    cities.build();
+    cities.render();
+
+    resetMothershipTime();
+};
+
+// Start game 
+const startGame = () => {
+    init();
+    // cities.render();
+    gameStates.currentState = gameStates.run;
+    gameLoop.start();
+};
 
 function onTick(currentTime) {
     gameStates.currentState(currentTime);
 }
-const gameLoop = new GameLoop(onTick);
 
+const gameLoop = new GameLoop(onTick);
 const gameStates = new GameStates(introScreen, startGame, runGame, finishLevel, loseLife, gameOver);
+
+const intro = new IntroScreen(startGame);
+

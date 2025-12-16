@@ -79,6 +79,7 @@ export default class IntroScreen {
         const startButtonElement = document.getElementById('startButton');
 
         startButtonElement.addEventListener('click', () => {
+            console.log("Button clicekd");
             startButtonElement.classList.add('hide');
             this.startGame();
         });
