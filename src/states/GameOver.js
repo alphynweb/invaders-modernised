@@ -1,5 +1,3 @@
-import { GAME_TEXT } from '../config';
-
 export default class GameOver {
     constructor(gameTextConfig, screen) {
         this.gameTextConfig = gameTextConfig;
