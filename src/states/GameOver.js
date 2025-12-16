@@ -4,9 +4,8 @@ export default class GameOver {
         this.screen = screen;
     }
 
-    endGame(gameLoop, cities) {
+    endGame(cities) {
         this.screen.clear();
-        gameLoop.stop();
         cities.clear();
     }
 

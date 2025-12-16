@@ -425,128 +425,12 @@ const onFinishLevel = () => {
 // Controls different game states
 // const gameStates = {
 //     currentState: null,
-//     introScreen: function () {
-//         screen.ctx.fillStyle = 'white';
-//         // Render Score
-//         screen.ctx.font = GAME_TEXT.font;
 
-//         const x = 300;
-//         const textX = 600;
-//         const verticalSpacing = 60;
-
-//         let currentYPos = 0;
-
-//         INVADER.forEach((invader, index) => {
-//             const y = (index + 1) * verticalSpacing;
-//             const type = invader.type;
-//             const invaderInfo = invader;
-//             const introInvader = new Invader(
-//                 type,
-//                 null,
-//                 null,
-//                 x,
-//                 y,
-//                 null
-//             )
-//             // introInvader.width = invader.width;
-//             // introInvader.height = invader.height;
-//             introInvader.x = x;
-//             introInvader.y = y;
-//             introInvader.spriteX = invader.spriteX;
-//             introInvader.spriteY = invader.spriteY;
-//             introInvader.score = invader.score;
-
-
-//             // Render invader
-//             introInvader.render();
-
-//             // Render text
-//             screen.ctx.fillText("Score " + introInvader.score, textX, (index + 1) * verticalSpacing + introInvader.height);
-
-//             currentYPos = (index + 1) * verticalSpacing;
-//         });
-
-//         // Mothership
-//         // const mothership = Object.assign(Mothership(), MOTHERSHIP);
-//         const mothership = new Mothership();
-
-//         mothership.x = x - 6;
-//         mothership.y = currentYPos + verticalSpacing + 6;
-//         mothership.isActive = true;
-
-//         mothership.render();
-
-//         screen.ctx.fillText("Score ???", textX, currentYPos + verticalSpacing + mothership.height);
-
-//         startButton.render();
-
-//         // Instructions
-
-//         let instructionsY = 550;
-
-//         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
-
-//         screen.ctx.fillText(String.fromCharCode('8592'), x, instructionsY);
-
-//         screen.ctx.font = GAME_TEXT.font;
-
-//         screen.ctx.fillText("Move tank left", textX, instructionsY);
-
-//         instructionsY += verticalSpacing;
-
-//         screen.ctx.font = GAME_TEXT.introScreenArrowFont;
-
-//         screen.ctx.fillText(String.fromCharCode('8594'), x, instructionsY);
-
-//         screen.ctx.font = GAME_TEXT.font;
-
-//         screen.ctx.fillText("Move tank right", textX, instructionsY);
-
-//         instructionsY += verticalSpacing;
-
-//         screen.ctx.fillText("Space bar", x, instructionsY);
-
-//         screen.ctx.fillText("Fire", textX, instructionsY);
-
-//         document.getElementById('startButton').addEventListener('click', function () {
-//             this.classList.add('hide');
-//             startGame();
-//         });
-//     },
 //     runGame: function (currentTime) {
 //         gameLoop.update(currentTime);
 //         gameLoop.render();
 //     },
-//     finishLevel: function () {
-//         // Implement short pause then re-setup invaders  and cities
 
-//         // Implement short pause
-
-//         // Setup invaders again - lower the y coord
-//         invader_group_y += INVADERS.rowHeight;
-
-//         // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
-//         if (invader_group_y > INVADERS.maxY) {
-//             invader_group_y = INVADERS.y;
-//             currentLevel += 1;
-//             invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-//         } else {
-//             invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-//         }
-
-//         invaders.build(invader_group_y);
-
-//         invaders.direction = 'right';
-//         // Setup cities again
-//         cities.build();
-//         cities.render();
-
-//         // Reset tank
-//         tank.reset();
-
-//         // Run game again
-//         this.currentState = this.runGame;
-//     },
 const loseLife = (currentTime) => {
     // Check to see if tank destroy animation has finished
     if (!tank.animationType) {
@@ -559,7 +443,8 @@ const loseLife = (currentTime) => {
 // };
 
 const endGame = () => {
-    gameOver.endGame(gameLoop, cities);
+    gameLoop.stop();
+    gameOver.endGame(cities);
     gameOver.render(score, startButton);
 }
 
