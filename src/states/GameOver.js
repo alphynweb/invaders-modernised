@@ -1,7 +1,8 @@
 import { GAME_TEXT } from '../config';
 
 export default class GameOver {
-    constructor(screen) {
+    constructor(gameTextConfig, screen) {
+        this.gameTextConfig = gameTextConfig;
         this.screen = screen;
     }
 
@@ -12,9 +13,8 @@ export default class GameOver {
     }
 
     render(score = 0, startButton) {
-        const gameTextConfig = GAME_TEXT;
         this.screen.ctx.fillStyle = 'white';
-        this.screen.ctx.font = gameTextConfig.font;
+        this.screen.ctx.font = this.gameTextConfig.font;
         this.screen.ctx.fillText("GAME OVER", 10, 30);
         this.screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
         startButton.classList.remove('hide');
