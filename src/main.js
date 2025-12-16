@@ -26,6 +26,7 @@ import button from './modules/Button/Button';
 
 import IntroScreen from './states/IntroScreen';
 import GameOver from './states/GameOver';
+import FinishLevel from './states/FinishLevel';
 
 
 let livesLeft;
@@ -394,6 +395,8 @@ const runGame = (currentTime) => {
     update(currentTime);
     render();
 };
+
+
 // Preload files
 const img = new Image();
 
@@ -401,66 +404,12 @@ const img = new Image();
 
 
 
-const finishLevel = () => {
-    // Implement short pause then re-setup invaders  and cities
+const onFinishLevel = () => {
+    const finishLevel = new FinishLevel(invaders, cities, tank);
 
-    // Implement short pause
-
-    // Setup invaders again - lower the y coord
-    invader_group_y += INVADER.rowHeight;
-
-    // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
-    if (invader_group_y > INVADERS.maxY) {
-        invader_group_y = INVADERS.y;
-        currentLevel += 1;
-        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-    } else {
-        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-    }
-
-    invaders.build(invader_group_y);
-
-    invaders.direction = 'right';
-    // Setup cities again
-    cities.build();
-    cities.render();
-
-    // Reset tank
-    tank.reset();
-
-    // Run game again
-    gameStates.currentState = gameStates.run;
-}
-
-
-
-const handleLevelFinished = () => {
-    // Implement short pause then re-setup invaders  and cities
-
-    // Implement short pause
-
-    // Setup invaders again - lower the y coord
-    invader_group_y += INVADERS.rowHeight;
-
-    // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
-    if (invader_group_y > INVADERS.maxY) {
-        invader_group_y = INVADERS.y;
-        currentLevel += 1;
-        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-    } else {
-        invaderMoveTime = INVADERS.moveTime - INVADERS.speedIncrease;
-    }
-
-    invaders.build(invader_group_y);
-
-    invaders.direction = 'right';
-    // Setup cities again
-    cities.build();
-    cities.render();
-
-    // Reset tank
-    tank.reset();
-
+    finishLevel.reset();
+    finishLevel.render();
+   
     // Run game again
     gameStates.currentState = gameStates.run;
 }
@@ -649,7 +598,7 @@ function onTick(currentTime) {
 }
 
 const gameLoop = new GameLoop(onTick);
-const gameStates = new GameStates(introScreen, startGame, runGame, finishLevel, loseLife, endGame);
+const gameStates = new GameStates(introScreen, startGame, runGame, onFinishLevel, loseLife, endGame);
 
 const intro = new IntroScreen(startGame);
 const gameOver = new GameOver(screen);
