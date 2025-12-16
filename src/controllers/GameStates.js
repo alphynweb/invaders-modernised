@@ -1,5 +1,5 @@
 export default class GameStates {
-    constructor(introScreen, startGame, runGame, finishLevel, loseLife, gameOver, ) {
+    constructor(introScreen, startGame, runGame, finishLevel, loseLife, gameOver,) {
         this.currentState = this.intro;
 
         // Functions passed in from main Game class
@@ -11,23 +11,23 @@ export default class GameStates {
         this.runGame = runGame;
     }
 
-    intro = (currentTime) => {
+    intro(currentTime) {
         this.introScreen(currentTime);
     }
 
-    run = (currentTime) => {
+    run(currentTime) {
         this.runGame(currentTime);
     }
 
-    finish = (currentTime) => {
+    finish(currentTime) {
         this.finishLevel(currentTime);
     }
 
-    lose = (currentTime) => {
+    lose(currentTime) {
         this.loseLife(currentTime);
     }
 
-    over = (currentTime) => {
+    over(currentTime) {
         this.gameOver(currentTime);
     }
 }
