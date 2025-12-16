@@ -609,7 +609,7 @@ const gameLoop = new GameLoop(onTick);
 const gameStates = new GameStates(introScreen, startGame, runGame, onFinishLevel, loseLife, endGame);
 
 const intro = new IntroScreen(startGame);
-const gameOver = new GameOver(screen);
+const gameOver = new GameOver(GAME_TEXT, screen);
 
 img.onload = () => {
     console.log("Images loaded");
