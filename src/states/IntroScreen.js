@@ -1,16 +1,13 @@
-import { GAME_TEXT, INVADER } from '../config';
-import Screen from '../modules/Screen/Screen';
-import Ctx from '../modules/Ctx/Ctx';
 import Invader from '../modules/Invader/Invader';
 import Mothership from '../modules/Mothership/Mothership';
 import Button from '../modules/Button/Button';
 
 export default class IntroScreen {
-    constructor(startGame) {
-        this.gameTextConfig = GAME_TEXT;
-        this.invaderConfig = INVADER;
-        this.screen = Screen();
-        this.ctx = Ctx();
+    constructor(gameTextConfig, invaderConfig, screen, startGame) {
+        this.gameTextConfig = gameTextConfig;
+        this.invaderConfig = invaderConfig;
+        this.screen = screen;
+        this.ctx = screen.ctx;
         this.ctx.font = this.gameTextConfig.font;
         this.ctx.fillStyle = this.gameTextConfig.fillStyle;
         this.x = 300;

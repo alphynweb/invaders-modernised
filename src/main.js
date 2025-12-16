@@ -608,7 +608,13 @@ function onTick(currentTime) {
 const gameLoop = new GameLoop(onTick);
 const gameStates = new GameStates(introScreen, startGame, runGame, onFinishLevel, loseLife, endGame);
 
-const intro = new IntroScreen(startGame);
+const intro = new IntroScreen(
+    GAME_TEXT,
+    INVADER,
+    screen,
+    startGame
+);
+
 const gameOver = new GameOver(GAME_TEXT, screen);
 
 img.onload = () => {
