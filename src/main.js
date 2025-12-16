@@ -25,7 +25,7 @@ import GameStates from './controllers/GameStates';
 import button from './modules/Button/Button';
 
 import IntroScreen from './states/IntroScreen';
-
+import GameOver from './states/GameOver';
 
 
 let livesLeft;
@@ -397,18 +397,7 @@ const runGame = (currentTime) => {
 // Preload files
 const img = new Image();
 
-img.onload = () => {
-    console.log("Images loaded");
-    const sounds = new Audio(gameSounds);
-    sounds.preload = true;
-    sounds.oncanplaythrough = () => {
-        console.log("Sounds loaded");
-        // setup();
-        gameStates.currentState = gameStates.intro;
-        gameStates.currentState();
-    };
-};
-img.src = gameSprite;
+
 
 
 
@@ -612,21 +601,9 @@ const loseLife = (currentTime) => {
 
 // };
 
-const gameOver = () => {
-    cancelAnimationFrame(gameLoop);
-    screen.clear();
-    cities.clear();
-    screen.ctx.fillStyle = 'white';
-    // Render Score
-    screen.ctx.font = GAME_TEXT.font;
-    screen.ctx.fillText("GAME OVER", 10, 30);
-    screen.ctx.fillText("YOU SCORED " + score.currentScore, 10, 60);
-    // Click canvas to start new game
-    document.getElementById('startButton').classList.remove('hide').addEventListener('click', function () {
-        this.classList.add('hide');
-        startGame();
-    });
-    screenCanvas.addEventListener('click', checkStartButttonHit());
+const endGame = () => {
+    gameOver.endGame(gameLoop, cities);
+    gameOver.render(score, startButton);
 }
 
 const introScreen = () => {
@@ -672,7 +649,20 @@ function onTick(currentTime) {
 }
 
 const gameLoop = new GameLoop(onTick);
-const gameStates = new GameStates(introScreen, startGame, runGame, finishLevel, loseLife, gameOver);
+const gameStates = new GameStates(introScreen, startGame, runGame, finishLevel, loseLife, endGame);
 
 const intro = new IntroScreen(startGame);
+const gameOver = new GameOver(screen);
 
+img.onload = () => {
+    console.log("Images loaded");
+    const sounds = new Audio(gameSounds);
+    sounds.preload = true;
+    sounds.oncanplaythrough = () => {
+        console.log("Sounds loaded");
+        // setup();
+        gameStates.currentState = gameStates.intro;
+        gameStates.currentState();
+    };
+};
+img.src = gameSprite;

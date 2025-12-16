@@ -26,6 +26,7 @@ export default class GameLoop {
     }
 
     stop() {
+        console.log("Stopping game loop");
         cancelAnimationFrame(this.rafId);
     }
 }
