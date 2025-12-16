@@ -1,9 +1,7 @@
-import { INVADER, INVADERS } from '../config';
-
 export default class FinishLevel {
-    constructor(invaders, cities, tank) {
-        this.invaderConfig = INVADER;
-        this.invadersConfig = INVADERS;
+    constructor(invaderConfig, invadersConfig, invaders, cities, tank) {
+        this.invaderConfig = invaderConfig;
+        this.invadersConfig = invadersConfig;
         this.invaders = invaders;
         this.cities = cities;
         this.tank = tank;
@@ -21,7 +19,6 @@ export default class FinishLevel {
         // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
         if (invader_group_y > this.invadersConfig.maxY) {
             invader_group_y = this.invadersConfig.y;
-            currentLevel += 1;
             invaderMoveTime = this.invadersConfig.moveTime - this.invadersConfig.speedIncrease;
         } else {
             invaderMoveTime = this.invadersConfig.moveTime - this.invadersConfig.speedIncrease;

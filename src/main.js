@@ -405,11 +405,19 @@ const img = new Image();
 
 
 const onFinishLevel = () => {
-    const finishLevel = new FinishLevel(invaders, cities, tank);
+    const finishLevel = new FinishLevel(
+        INVADER,
+        INVADERS,
+        invaders,
+        cities,
+        tank
+    );
 
-    finishLevel.reset();
+    finishLevel.reset(currentLevel);
     finishLevel.render();
-   
+
+    currentLevel++;
+
     // Run game again
     gameStates.currentState = gameStates.run;
 }
