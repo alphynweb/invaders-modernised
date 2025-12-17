@@ -1,33 +1,41 @@
 export default class GameStates {
-    constructor(introScreen, startGame, runGame, finishLevel, loseLife, gameOver,) {
+    constructor(
+        onIntro,
+        onStartGame,
+        onRunGame,
+        onFinishLevel,
+        onLoseLife,
+        onEndGame
+    ) {
         this.currentState = this.intro;
 
         // Functions passed in from main Game class
-        this.startGame = startGame;
-        this.finishLevel = finishLevel;
-        this.loseLife = loseLife;
-        this.introScreen = introScreen;
-        this.gameOver = gameOver;
-        this.runGame = runGame;
+        this.onStartGame = onStartGame;
+        this.onFinishLevel = onFinishLevel;
+        this.onLoseLife = onLoseLife;
+        this.onIntro = onIntro;
+        this.onEndGame = onEndGame;
+        this.onRunGame = onRunGame;
     }
 
     intro(currentTime) {
-        this.introScreen(currentTime);
+        this.onIntro(currentTime);
     }
 
     run(currentTime) {
-        this.runGame(currentTime);
+        // console.log("Running game from GameStates.js");
+        this.onRunGame(currentTime);
     }
 
     finish(currentTime) {
-        this.finishLevel(currentTime);
+        this.onFinishLevel(currentTime);
     }
 
     lose(currentTime) {
-        this.loseLife(currentTime);
+        this.onLoseLife(currentTime);
     }
 
     over(currentTime) {
-        this.gameOver(currentTime);
+        this.onEndGame(currentTime);
     }
 }

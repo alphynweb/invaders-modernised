@@ -11,7 +11,7 @@ export const GAME_TEXT = {
 };
 
 export const LIVES = {
-    lives: 1, // No of initial lives
+    lives: 2, // No of initial lives
     indicatorGap: 10 // Space between lives at top of screen
 };
 
