@@ -11,7 +11,7 @@ export const GAME_TEXT = {
 };
 
 export const LIVES = {
-    lives: 2, // No of initial lives
+    lives: 5, // No of initial lives
     indicatorGap: 10 // Space between lives at top of screen
 };
 
@@ -61,7 +61,7 @@ export const INVADERS = {
     maxY: 300,
     columnWidth: 50,
     rowHeight: 50,
-    columns: 1,
+    columns: 11,
     columnGap: 5,
     rowGap: 10,
     moveTime: 1000, // Time between movement
