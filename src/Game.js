@@ -134,73 +134,20 @@ export default class Game {
     }
 
     update = (currentTime) => {
-        // console.log("Running update from Game.js");
-
         this.purge();
-        this.bullets.move();
 
-        // If spacebar was pressed, then create new bullet
         if (inputHandler.isKeyPressed('Space')) {
-            this.isTankBullet = this.bullets.bulletList.find((bullet) => {
-                return bullet.type === 'tank';
-            });
-            if (!this.isTankBullet) {
-                this.bulletType = "tank";
-                this.bulletSubType = null;
-                this.bulletX = this.tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2);
-                this.bulletY = this.tank.y - TANK.bulletInfo.height;
-                this.bullets.addBullet(
-                    this.bulletType,
-                    this.bulletSubType,
-                    this.bulletX,
-                    this.bulletY
-                )
-                this.tank.animationType = 'shoot';
-                this.tank.animationFrame = 1;
-            }
+            this.onTankBulletFired();
         }
 
-        // Check collisions
         this.handleTankBulletCollisions();
         this.handleInvaderBulletCollisions();
         this.handleMothershipBulletCollisions();
 
-        // Move objects
         this.tank.move(inputHandler.currentKeysPressed);
-
-        if (currentTime > this.now + this.invaderMoveTime) {
-            // Only move invaders etc if none of them are currently being destroyed
-            let areInvadersExploding = this.invaders.invaderList.filter((invader) => {
-                return invader.isExploding;
-            });
-            if (!areInvadersExploding.length) {
-                this.invaders.move();
-                this.createInvaderBullets();
-            }
-            this.now = currentTime;
-
-            // Check for invaders reaching bottom of screen
-            this.invaders.invaderList.forEach((invader) => {
-                if (invader.y + invader.height > TANK.y) {
-                    this.gameStates.currentState = this.gameStates.over;
-                }
-            });
-        }
-
-        if (this.mothership.isActive && !this.mothership.isExploding) {
-            this.createMothershipBullets();
-            this.mothership.move();
-            if (this.mothership.x > this.screenConfig.width) {
-                this.mothership.remove();
-                this.resetMothershipTime();
-            }
-        } else {
-            if (currentTime > this.mothershipOldTime + this.mothershipNewTime) {
-                this.mothershipOldTime = currentTime;
-                this.mothership.reset();
-                this.resetMothershipTime();
-            }
-        }
+        this.bullets.move();
+        this.moveInvaders(currentTime);
+        this.moveMothership(currentTime);
     }
 
     render = () => {
@@ -520,6 +467,65 @@ export default class Game {
             }
 
             const t = 0;
+        }
+    }
+
+    onTankBulletFired() {
+        this.isTankBullet = this.bullets.bulletList.find((bullet) => {
+            return bullet.type === 'tank';
+        });
+        if (!this.isTankBullet) {
+            this.bulletType = "tank";
+            this.bulletSubType = null;
+            this.bulletX = this.tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2);
+            this.bulletY = this.tank.y - TANK.bulletInfo.height;
+            this.bullets.addBullet(
+                this.bulletType,
+                this.bulletSubType,
+                this.bulletX,
+                this.bulletY
+            )
+            this.tank.animationType = 'shoot';
+            this.tank.animationFrame = 1;
+        }
+    }
+
+
+    moveMothership = (currentTime) => {
+        if (this.mothership.isActive && !this.mothership.isExploding) {
+            this.createMothershipBullets();
+            this.mothership.move();
+            if (this.mothership.x > this.screenConfig.width) {
+                this.mothership.remove();
+                this.resetMothershipTime();
+            }
+        } else {
+            if (currentTime > this.mothershipOldTime + this.mothershipNewTime) {
+                this.mothershipOldTime = currentTime;
+                this.mothership.reset();
+                this.resetMothershipTime();
+            }
+        }
+    }
+
+    moveInvaders = (currentTime) => {
+        if (currentTime > this.now + this.invaderMoveTime) {
+            // Only move invaders etc if none of them are currently being destroyed
+            let areInvadersExploding = this.invaders.invaderList.filter((invader) => {
+                return invader.isExploding;
+            });
+            if (!areInvadersExploding.length) {
+                this.invaders.move();
+                this.createInvaderBullets();
+            }
+            this.now = currentTime;
+
+            // Check for invaders reaching bottom of screen
+            this.invaders.invaderList.forEach((invader) => {
+                if (invader.y + invader.height > TANK.y) {
+                    this.gameStates.currentState = this.gameStates.over;
+                }
+            });
         }
     }
 
