@@ -362,34 +362,6 @@ export default class Game {
                             }
                         }
                     });
-
-                    for (let i = 0; i < CITY.no; i++) {
-                        cityHit = this.cities.cityList[i];
-                        // collisionDetector.obj2 = cityHit;
-                        this.collisionInfo = collisionDetector.collisionInfo(bullet, cityHit);
-
-                        if (this.collisionInfo.didCollide) {
-
-                            // Check the area directly above the bullet to see whether it's solid
-                            // Area to check imagedata of
-                            topLeftX = bullet.x - cityHit.x; // Bullet x
-                            topLeftY = bullet.y - cityHit.y + bulletInfo.height; // 1 px below bullet y
-                            width = bulletInfo.width;
-                            height = 1;
-                            imgData = cityHit.ctx.getImageData(topLeftX, topLeftY, width, height);
-
-                            for (let i = 0; i < imgData.data.length; i += 4) {
-                                if (imgData.data[i + 3] === 255) {
-                                    damageCity = true;
-                                }
-                            }
-
-                            if (damageCity === true) { // If pixel alpha is 255
-                                cityHit.damage(bullet);
-                                this.bullets.removeBullet(index);
-                            }
-                        }
-                    }
                 }
             });
         }
