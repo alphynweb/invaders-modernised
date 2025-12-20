@@ -1,0 +1,201 @@
+export default class CollisionSystem {
+    constructor(collisionDetector, tankConfig, invaderConfig, cityConfig, tank, invaders, mothership, bullets, cities) {
+        this.tankConfig = tankConfig;
+        this.invaderConfig = invaderConfig;
+        this.cityConfig = cityConfig;
+
+        this.collisionDetector = collisionDetector;
+        this.tank = tank;
+        this.invaders = invaders;
+        this.mothership = mothership;
+        this.bullets = bullets;
+        this.cities = cities;
+
+        this.collisions = [];
+    }
+
+    checkCollisions() {
+        this.collisions = [];
+        this.handleTankBulletCollisions();
+        this.handleInvaderBulletCollisions();
+        this.handleMothershipBulletCollisions();
+    }
+
+    handleTankBulletCollisions = () => {
+        // Establish whether tank bullet is currently in play
+        let tankBulletIndex;
+        let collisionInfo;
+
+        if (this.bullets.bulletList.length) {
+            tankBulletIndex = this.bullets.bulletList.findIndex((bullet) => {
+                return bullet.type === 'tank';
+            });
+        }
+
+        // Collision detection for tank bullet
+        if (tankBulletIndex > -1) {
+            // Set collisionDetector obj1 to tank bullet
+            const tankBullet = this.bullets.bulletList[tankBulletIndex];
+
+            // Tank bullet vs invaders
+            for (const invader of this.invaders.invaderList) {
+                collisionInfo = this.collisionDetector.collisionInfo(tankBullet, invader);
+
+                if (collisionInfo.didCollide) {
+                    if (!invader.isExploding) {
+                        const collision = {
+                            type: 'Tank vs Invader',
+                            bullet: tankBullet,
+                            bulletIndex: tankBulletIndex,
+                            target: invader
+                        };
+                        this.collisions.push(collision);
+                        break;
+                    }
+                }
+            };
+
+            // Tank bulllet vs cities
+            for (const city of this.cities.cityList) {
+                collisionInfo = this.collisionDetector.collisionInfo(tankBullet, city);
+
+                if (collisionInfo.didCollide) {
+                    // Check the area directly above the bullet to see whether it's solid
+
+                    // If bullet y is lower than city y (To stop checking element outside the bounds of the city = error)
+                    let damageCity = false;
+
+                    // Area to check imagedata of
+                    const topLeftX = tankBullet.x - city.x; // Bullet x
+                    const topLeftY = tankBullet.y - city.y - 1; // 1 px above bullet y
+                    const width = this.tankConfig.bulletInfo.width;
+                    const height = 1;
+                    const imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
+
+                    for (let i = 0; i < imgData.data.length; i += 4) {
+                        if (imgData.data[i + 3] === 255) {
+                            damageCity = true;
+                        }
+                    }
+
+                    if (damageCity) { // If pixel alpha is 255
+                        const collision = {
+                            type: 'Tank vs City',
+                            bullet: tankBullet,
+                            bulletIndex: tankBulletIndex,
+                            target: city
+                        };
+                        this.collisions.push(collision);
+                        break;
+                    }
+                }
+            }
+
+            // Tank bullet vs mothership
+            if (this.mothership.isActive) {
+                collisionInfo = this.collisionDetector.collisionInfo(tankBullet, this.mothership);
+
+                if (collisionInfo.didCollide) {
+                    const collision = {
+                        type: 'Tank vs Mothership',
+                        bullet: tankBullet,
+                        bulletIndex: tankBulletIndex,
+                        target: this.mothership
+                    };
+                    this.collisions.push(collision);
+                }
+            }
+        }
+    }
+
+    handleInvaderBulletCollisions = () => {
+        // Collision detector for invader bullets
+        if (this.bullets.bulletList.length) {
+            let invader;
+            let bulletInfo;
+            let cityHit; // City that is hit
+            // Area to check imagedata of    
+            let topLeftX;
+            let topLeftY;
+            let width;
+            let height;
+            let imgData;
+            let damageCity = false;
+            let collisionObj;
+            let collisionInfo;
+
+            // Run through any invaders bullets in bulletsList
+            this.bullets.bulletList.forEach((bullet, index) => {
+                if (bullet.type === 'invader') {
+                    invader = this.invaderConfig.find((inv) => inv.type === bullet.subType);
+                    bulletInfo = invader.bulletInfo;
+
+                    // Invader vs Tank
+                    collisionInfo = this.collisionDetector.collisionInfo(bullet, this.tank);
+
+                    if (collisionInfo.didCollide && !this.tank.isAnimating) {
+                        collisionObj = {
+                            type: 'Invader vs Tank',
+                            bullet: bullet,
+                            bulletIndex: index,
+                            target: this.tank
+                        };
+                        this.collisions.push(collisionObj);
+                    }
+
+                    // Invader vs cities
+                    this.cities.cityList.forEach((city) => {
+                        damageCity = false;
+                        collisionInfo = this.collisionDetector.collisionInfo(bullet, city);
+                        if (collisionInfo.didCollide) {
+                            // Check the area directly above the bullet to see whether it's solid
+                            // Area to check imagedata of
+                            topLeftX = bullet.x - city.x; // Bullet x
+                            topLeftY = bullet.y - city.y + bulletInfo.height; // 1 px below bullet y
+                            width = bulletInfo.width;
+                            height = 1;
+                            imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
+
+                            for (let i = 0; i < imgData.data.length; i += 4) {
+                                if (imgData.data[i + 3] === 255) {
+                                    damageCity = true;
+                                }
+                            }
+
+                            if (damageCity) { // If pixel alpha is 255
+                                collisionObj = {
+                                    type: 'Invader vs City',
+                                    bullet: bullet,
+                                    bulletIndex: index,
+                                    target: city
+                                };
+                                this.collisions.push(collisionObj);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    handleMothershipBulletCollisions = () => {
+        let collisionInfo;
+        let collisionObj;
+
+        this.bullets.bulletList.forEach((bullet, index) => {
+            if (bullet.type === 'mothership') {
+                collisionInfo = this.collisionDetector.collisionInfo(bullet, this.tank);
+
+                if (collisionInfo.didCollide && !this.tank.isAnimating) {
+                    collisionObj = {
+                        type: 'Mothership vs Tank',
+                        bullet: bullet,
+                        bulletIndex: index,
+                        target: this.tank
+                    };
+                    this.collisions.push(collisionObj);
+                }
+            }
+        });
+    }
+}

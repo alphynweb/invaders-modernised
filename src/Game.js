@@ -27,6 +27,7 @@ import button from './modules/Button/Button';
 import IntroScreen from './states/IntroScreen';
 import GameOver from './states/GameOver';
 import FinishLevel from './states/FinishLevel';
+import CollisionSystem from './systems/CollisionSystem';
 
 export default class Game {
     constructor() {
@@ -64,6 +65,7 @@ export default class Game {
         this.isTankBullet = false;
         this.invaderGroupY = null;
         this.currentLevel = 1;
+        this.collisionDetector = collisionDetector;
 
         this.screenCanvas = document.getElementById('screenCanvas');
 
@@ -131,6 +133,18 @@ export default class Game {
 
         // resetMothershipTime();
         this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
+
+        this.collisionSystem = new CollisionSystem(
+            this.collisionDetector,
+            this.tankConfig,
+            this.invaderConfig,
+            this.cityConfig,
+            this.tank,
+            this.invaders,
+            this.mothership,
+            this.bullets,
+            this.cities
+        );
     }
 
     update = (currentTime) => {
@@ -140,14 +154,75 @@ export default class Game {
             this.onTankBulletFired();
         }
 
-        this.handleTankBulletCollisions();
-        this.handleInvaderBulletCollisions();
-        this.handleMothershipBulletCollisions();
+        this.checkCollisions();
 
         this.tank.move(inputHandler.currentKeysPressed);
         this.bullets.move();
         this.moveInvaders(currentTime);
         this.moveMothership(currentTime);
+    }
+
+    checkCollisions = () => {
+        this.collisionSystem.checkCollisions();
+        const collisions = this.collisionSystem.collisions;
+
+        const collisionHandlers = {
+            "Tank vs Invader": (collision) => {
+                this.score.increase(collision.target.score);
+                collision.target.destroy();
+                this.invaderMoveTime -= this.invadersConfig.speedIncrease;
+                this.bullets.removeBullet(collision.bulletIndex);
+            },
+            "Tank vs City": (collision) => {
+                collision.target.damage(collision.bullet);
+                this.bullets.removeBullet(collision.bulletIndex);
+            },
+            "Tank vs Mothership": (collision) => {
+                this.mothership.destroy();
+                this.resetMothershipTime();
+                this.bullets.removeBullet(collision.bulletIndex);
+                this.score.increase(500);
+            },
+            "Invader vs Tank": (collision) => {
+                inputHandler.currentKeysPressed = [];
+                this.bullets.removeBullet(collision.bulletIndex);
+                this.tank.destroy();
+                this.lives.loseLife();
+                if (this.lives.currentLives === 0) {
+                    this.gameStates.currentState = this.gameStates.over;
+                    return;
+                }
+                this.gameStates.currentState = this.gameStates.lose;
+            },
+            "Invader vs City": (collision) => {
+                const city = collision.target;
+                city.damage(collision.bullet);
+                this.bullets.removeBullet(collision.bulletIndex);
+            },
+            "Mothership vs Tank": (collision) => {
+                inputHandler.currentKeysPressed = [];
+                this.bullets.removeBullet(collision.bulletIndex);
+                this.tank.destroy();
+                this.lives.loseLife();
+                if (this.lives.currentLives === 0) {
+                    this.gameStates.currentState = this.gameStates.over;
+                    return;
+                }
+                this.gameStates.currentState = this.gameStates.lose;
+            },
+            "Mothership vs City": (collision) => {
+
+            }
+        }
+
+        if (collisions.length) {
+            collisions.forEach((collision) => {
+                const handlerType = collisionHandlers[collision.type];
+                if (handlerType) {
+                    handlerType(collision);
+                }
+            });
+        }
     }
 
     render = () => {
@@ -221,174 +296,6 @@ export default class Game {
         this.gameLoop.stop();
         this.gameOver.endGame(this.cities);
         this.gameOver.render(this.score, this.startButton);
-    }
-
-    handleTankBulletCollisions = () => {
-        // Establish whether tank bullet is currently in play
-        let tankBulletIndex;
-        let collisionInfo;
-        let invaderHit;
-
-        if (this.bullets.bulletList.length) {
-            tankBulletIndex = this.bullets.bulletList.findIndex((bullet) => {
-                return bullet.type === 'tank';
-            });
-        }
-
-        // Collision detection for tank bullet
-        if (tankBulletIndex > -1) {
-            // Set collisionDetector obj1 to tank bullet
-            const tankBullet = this.bullets.bulletList[tankBulletIndex];
-
-            this.invaders.invaderList.forEach((invader) => {
-                collisionInfo = collisionDetector.collisionInfo(tankBullet, invader);
-
-                if (collisionInfo.didCollide) {
-                    if (!invader.isExploding) {
-                        this.score.increase(invader.score);
-                        invader.destroy();
-                        this.invaderMoveTime -= this.invadersConfig.speedIncrease;
-                        this.bullets.removeBullet(tankBulletIndex);
-                    }
-                }
-            });
-
-            // Tank bulllet vs cities
-            for (let i = 0; i < CITY.no; i++) {
-                const cityHit = this.cities.cityList[i];
-                // collisionDetector.obj2 = cityHit;
-                collisionInfo = collisionDetector.collisionInfo(tankBullet, cityHit);
-
-                if (collisionInfo.didCollide) {
-                    // Check the area directly above the bullet to see whether it's solid
-
-                    // If bullet y is lower than city y (To stop checking element outside the bounds of the city = error)
-                    let damageCity = false;
-                    // Area to check imagedata of
-                    const topLeftX = tankBullet.x - cityHit.x; // Bullet x
-                    const topLeftY = tankBullet.y - cityHit.y - 1; // 1 px above bullet y
-                    const width = TANK.bulletInfo.width;
-                    const height = 1;
-                    const imgData = cityHit.ctx.getImageData(topLeftX, topLeftY, width, height);
-
-                    for (let i = 0; i < imgData.data.length; i += 4) {
-                        if (imgData.data[i + 3] === 255) {
-                            damageCity = true;
-                        }
-                    }
-
-                    if (damageCity === true) { // If pixel alpha is 255
-                        cityHit.damage(tankBullet);
-                        this.bullets.removeBullet(tankBulletIndex);
-                    }
-                }
-            }
-
-            // Tank bullet vs mothership
-            if (this.mothership.isActive) {
-                // collisionDetector.obj2 = mothership;
-                collisionInfo = collisionDetector.collisionInfo(tankBullet, this.mothership);
-
-                if (collisionInfo.didCollide) {
-                    this.mothership.destroy();
-                    this.resetMothershipTime();
-                    this.bullets.removeBullet(tankBulletIndex);
-                    this.score.increase(500);
-                }
-            }
-        }
-    }
-
-    handleInvaderBulletCollisions = () => {
-        // Collision detector for invader bullets
-        if (this.bullets.bulletList.length) {
-            let invaderType;
-            let bulletInfo;
-            let cityHit; // City that is hit
-            // Area to check imagedata of    
-            let topLeftX;
-            let topLeftY;
-            let width;
-            let height;
-            let imgData;
-            let damageCity = false;
-
-            // Run through any invaders bullets in bulletsList
-            this.bullets.bulletList.forEach((bullet, index) => {
-                if (bullet.type === 'invader') {
-                    invaderType = INVADER.find((inv) => inv.type === bullet.subType);
-                    bulletInfo = invaderType.bulletInfo;
-                    this.collisionInfo = collisionDetector.collisionInfo(bullet, this.tank);
-
-                    if (this.collisionInfo.didCollide && !this.tank.isAnimating) {
-                        // The invaders pause and the tank appears on the left hand side of the screen again
-                        // All the invader bullets are deleted
-                        // The game pauses while the tank destroy animate happens
-                        this.gameStates.currentState = this.gameStates.lose;
-
-                        inputHandler.currentKeysPressed = []; // Clear out the input handler info
-                        this.bullets.removeBullet(index);
-                        this.tank.destroy();
-                        this.lives.loseLife();
-                        if (this.lives.currentLives === 0) {
-                            this.gameStates.currentState = this.gameStates.over;
-                            return;
-                        }
-                    }
-                    // Invader bullet vs cities
-
-                    this.cities.cityList.forEach((city) => {
-                        damageCity = false;
-                        this.collisionInfo = collisionDetector.collisionInfo(bullet, city);
-                        if (this.collisionInfo.didCollide) {
-
-                            // Check the area directly above the bullet to see whether it's solid
-                            // Area to check imagedata of
-                            topLeftX = bullet.x - city.x; // Bullet x
-                            topLeftY = bullet.y - city.y + bulletInfo.height; // 1 px below bullet y
-                            width = bulletInfo.width;
-                            height = 1;
-                            imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
-
-                            for (let i = 0; i < imgData.data.length; i += 4) {
-                                if (imgData.data[i + 3] === 255) {
-                                    damageCity = true;
-                                }
-                            }
-
-                            if (damageCity) { // If pixel alpha is 255
-                                city.damage(bullet);
-                                this.bullets.removeBullet(index);
-                            }
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    handleMothershipBulletCollisions = () => {
-        this.bullets.bulletList.forEach((bullet, index) => {
-            if (bullet.type === 'mothership') {
-                this.collisionInfo = collisionDetector.collisionInfo(bullet, this.tank);
-
-                if (this.collisionInfo.didCollide && !this.tank.isAnimating) {
-                    // The invaders pause and the tank appears on the left hand side of the screen again
-                    // All the invader bullets are deleted
-                    // The game pauses while the tank destroy animate happens
-                    this.gameStates.currentState = this.gameStates.lose;
-
-                    inputHandler.currentKeysPressed = []; // Clear out the input handler info
-                    this.bullets.removeBullet(index);
-                    this.tank.destroy();
-                    this.lives.loseLife();
-                    if (this.lives.currentLives === 0) {
-                        this.gameStates.currentState = this.gameStates.over;
-                        return;
-                    }
-                }
-            }
-        });
     }
 
 
