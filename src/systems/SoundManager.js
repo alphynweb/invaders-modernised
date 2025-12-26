@@ -37,10 +37,10 @@ export default class AudioManager {
     }
 
     mute() {
-
+        this.muted = true;
     }
 
     unMute() {
-
+        this.muted = false;
     }
 }
