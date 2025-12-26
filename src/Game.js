@@ -3,7 +3,6 @@ import { CITY, GAME_TEXT, INVADER, INVADERS, LIVES, MOTHERSHIP, SCREEN, TANK } f
 
 // Assets
 import gameSprite from './assets/images/sprite-2.png';
-import gameSounds from './assets/audio/gamesounds.mp3';
 
 //Utils
 import collisionDetector from './utils/CollisionDetector';
@@ -28,6 +27,7 @@ import IntroScreen from './states/IntroScreen';
 import GameOver from './states/GameOver';
 import FinishLevel from './states/FinishLevel';
 import CollisionSystem from './systems/CollisionSystem';
+import SoundManager from './systems/SoundManager';
 
 export default class Game {
     constructor() {
@@ -66,6 +66,7 @@ export default class Game {
         this.invaderGroupY = null;
         this.currentLevel = 1;
         this.collisionDetector = collisionDetector;
+        this.audioCtx = new AudioContext();
 
         this.screenCanvas = document.getElementById('screenCanvas');
 
@@ -95,21 +96,15 @@ export default class Game {
         const img = new Image();
         img.onload = () => {
             console.log("Images loaded");
-            const sounds = new Audio(gameSounds);
-            sounds.preload = true;
-            sounds.oncanplaythrough = () => {
-                console.log("Sounds loaded");
-                // setup();
-                // const game = new Game();
-
-                this.gameStates.currentState = this.gameStates.intro;
-                this.gameStates.currentState();
-            };
+            this.gameStates.currentState = this.gameStates.intro;
+            this.gameStates.currentState();
         };
         img.src = gameSprite;
     }
 
-    init = () => {
+    init = async () => {
+        await this.setupAudio('/audio/audioSprite.mp3');
+
         this.invaderGroupY = this.invadersConfig.y;
         this.livesLeft = this.livesConfig.lives;
 
@@ -131,7 +126,6 @@ export default class Game {
         this.cities.build();
         this.cities.render();
 
-        // resetMothershipTime();
         this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
 
         this.collisionSystem = new CollisionSystem(
@@ -145,6 +139,27 @@ export default class Game {
             this.bullets,
             this.cities
         );
+    }
+
+    setupAudio = async (audioSpriteUrl) => {
+        this.soundsMap = new Map([
+            ['invaderExplosion', { start: 1.305, stop: 1.680 }],
+            ['tankExplosion', { start: 7.05, stop: 7.95 }],
+            ['tankBulletFired', { start: 0.008, stop: 0.307 }],
+            ['invadersMoved', { start: 2.676, stop: 2.768 }],
+            ['mothershipExplosion', { start: 7.05, stop: 7.95 }]
+        ]);
+
+        this.soundManager = new SoundManager(
+            this.sounds,
+            this.soundsMap,
+            this.audioCtx,
+        );
+
+        const response = await fetch(audioSpriteUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        this.audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+        this.soundManager.setAudioBuffer(this.audioBuffer);
     }
 
     update = (currentTime) => {
@@ -172,6 +187,7 @@ export default class Game {
                 collision.target.destroy();
                 this.invaderMoveTime -= this.invadersConfig.speedIncrease;
                 this.bullets.removeBullet(collision.bulletIndex);
+                this.soundManager.play('invaderExplosion');
             },
             "Tank vs City": (collision) => {
                 collision.target.damage(collision.bullet);
@@ -182,6 +198,7 @@ export default class Game {
                 this.resetMothershipTime();
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.score.increase(500);
+                this.soundManager.play('mothershipExplosion');
             },
             "Invader vs Tank": (collision) => {
                 inputHandler.currentKeysPressed = [];
@@ -192,6 +209,7 @@ export default class Game {
                     this.gameStates.currentState = this.gameStates.over;
                     return;
                 }
+                this.soundManager.play('tankExplosion');
                 this.gameStates.currentState = this.gameStates.lose;
             },
             "Invader vs City": (collision) => {
@@ -208,6 +226,7 @@ export default class Game {
                     this.gameStates.currentState = this.gameStates.over;
                     return;
                 }
+                this.soundManager.play('tankExplosion');
                 this.gameStates.currentState = this.gameStates.lose;
             },
             "Mothership vs City": (collision) => {
@@ -256,8 +275,9 @@ export default class Game {
         this.startButton = document.getElementById('startButton');
     }
 
-    onStartGame = () => {
-        this.init();
+    onStartGame = async () => {
+        await this.audioCtx.resume();
+        await this.init();
         this.gameStates.currentState = this.gameStates.run;
         this.gameLoop.start();
     }
@@ -366,6 +386,7 @@ export default class Game {
             )
             this.tank.animationType = 'shoot';
             this.tank.animationFrame = 1;
+            this.soundManager.play('tankBulletFired');
         }
     }
 
@@ -396,6 +417,7 @@ export default class Game {
             if (!areInvadersExploding.length) {
                 this.invaders.move();
                 this.createInvaderBullets();
+                this.soundManager.play("invadersMoved");
             }
             this.now = currentTime;
 

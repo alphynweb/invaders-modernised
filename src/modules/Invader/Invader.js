@@ -1,15 +1,11 @@
 import { INVADERS, INVADER } from '../../config';
 import Ctx from '../Ctx/Ctx';
 import Sprite from '../Sprite/Sprite';
-import Sounds from '../Sounds/Sounds';
 
 export default class Invader {
     constructor(type, x, y) {
         this.config = INVADER.find((inv) => inv.type === type);
         this.type = type;
-        this.destroySound = Sounds();
-        this.destroySound.startTime = 1.305; // Move this to config file
-        this.destroySound.stopTime = 1.680; // M<ove this to config file
         this.x = x;
         this.y = y;
         this.ctx = Ctx(); // Convert Ctx to class (?)

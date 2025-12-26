@@ -1,6 +1,5 @@
 import Ctx from '../Ctx/Ctx';
 import Sprite from '../Sprite/Sprite';
-import Sounds from '../Sounds/Sounds';
 import { MOTHERSHIP } from '../../config';
 
 export default class Mothership {

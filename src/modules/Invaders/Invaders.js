@@ -1,6 +1,5 @@
 import { INVADER, INVADERS, SCREEN, SOUNDS } from '../../config';
 import Invader from '../Invader/Invader';
-import Sounds from '../Sounds/Sounds';
 
 export default class Invaders {
     constructor(invadersY) {
@@ -106,7 +105,6 @@ export default class Invaders {
 
     move() {
         this.currentMoveSound = this.moveSounds[this.currentMoveSoundIndex];
-        // this.currentMoveSound.play();
         this.currentMoveSoundIndex++;
 
         if (this.currentMoveSoundIndex > this.moveSounds.length - 1) {

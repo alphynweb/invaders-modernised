@@ -1,13 +1,9 @@
 import { INVADER, MOTHERSHIP, SCREEN, TANK } from '../../config';
 import Bullet from '../Bullet/Bullet';
-import Sounds from '../Sounds/Sounds';
 
 export default class Bullets {
     constructor() {
         this.bulletList = [];
-        this.shootSound = Sounds();
-        this.shootSound.startTime = 0.008;
-        this.shootSound.stopTime = 0.307;
     }
 
     addBullet(type, subType, x, y) {
@@ -22,7 +18,6 @@ export default class Bullets {
 
         switch (type) {
             case "tank":
-                this.shootSound.play();
                 bulletInfo = TANK.bulletInfo;
                 direction = "up";
                 break;

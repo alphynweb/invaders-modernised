@@ -1,12 +1,12 @@
-import gameSounds from '../../assets/audio/gamesounds.mp3';
+import audioSprite from '/audio/audioSprite.mp3';
 
 const sounds = () => {
     return {
-        soundSrc: gameSounds,
+        soundSrc: audioSprite,
         startTime: null,
         stopTime: null,
         soundObject: document.createElement('audio'),
-        play: function(sound) {
+        play: function (sound) {
             this.soundObject.src = this.soundSrc;
             this.soundObject.currentTime = this.startTime;
             this.soundObject.addEventListener('timeupdate', () => {
@@ -14,9 +14,8 @@ const sounds = () => {
                     this.pause();
                 }
             });
-            // this.soundObject.play();
         },
-        pause: function() {
+        pause: function () {
             this.soundObject.pause();
         }
     };

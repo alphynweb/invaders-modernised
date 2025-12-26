@@ -1,7 +1,6 @@
 import { SCREEN, TANK } from '../../config';
 import Ctx from '../Ctx/Ctx';
 import Sprite from '../Sprite/Sprite';
-import Sounds from '../Sounds/Sounds';
 
 export default class Tank {
     constructor() {
@@ -13,9 +12,6 @@ export default class Tank {
         this.animationType = null;
         this.destroyAnimationFrames = 100; // TODO - move this to config
         this.shootAnimationFrames = 10; // TODO - move this to config
-        this.explodeSound = Sounds();
-        this.explodeSound.startTime = 7.05; // TOPDO - move this to config
-        this.explodeSound.stopTime = 7.95; // TODO - move this to config
         this.speed = this.config.speed;
         this.width = this.config.width;
         this.height = this.config.height;
@@ -41,8 +37,6 @@ export default class Tank {
     }
 
     destroy() {
-        // Set isAnimating frame to start animation
-        // this.explodeSound.play(); 
         this.animationFrame = 1;
         this.animationType = 'destroy';
     }
