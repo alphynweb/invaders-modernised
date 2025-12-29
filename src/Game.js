@@ -66,7 +66,6 @@ export default class Game {
         this.invaderGroupY = null;
         this.currentLevel = 1;
         this.collisionDetector = collisionDetector;
-        this.audioCtx = new AudioContext();
 
         this.screenCanvas = document.getElementById('screenCanvas');
 
@@ -100,10 +99,35 @@ export default class Game {
             this.gameStates.currentState();
         };
         img.src = gameSprite;
+
+        this.volumeControlContainer = document.getElementById('volume');
+        this.volumeControl = document.getElementById('volumeControl');
     }
 
     init = async () => {
         await this.setupAudio('/audio/audioSprite.mp3');
+        await this.soundManager.init();
+
+        this.volumeControlContainer.style.visibility = "visible";
+        // this.volumeControl.value = 0;
+
+        // this.volumeControl = document.createElement('input');
+        // this.volumeControl.id = 'volumeControl';
+        // this.volumeControl.type = 'range';
+        // this.volumeControl.min = 0;
+        // this.volumeControl.max = 1;
+        // this.volumeControl.step = 0.01;
+        // this.volumeControl.value = 0;
+
+        // const gameArea = document.getElementById('gameArea');
+        // gameArea.appendChild(this.volumeControl);
+
+        this.volumeControl.oninput = () => {
+            // console.log("Volume = ", this.volumeControl.value);
+            this.soundManager.onSetVolume(this.volumeControl.value);
+        }
+
+        this.soundManager.mute();
 
         this.invaderGroupY = this.invadersConfig.y;
         this.livesLeft = this.livesConfig.lives;
@@ -142,7 +166,7 @@ export default class Game {
     }
 
     setupAudio = async (audioSpriteUrl) => {
-        this.soundsMap = new Map([
+        const soundsMap = new Map([
             ['invaderExplosion', { start: 1.305, stop: 1.680 }],
             ['tankExplosion', { start: 7.05, stop: 7.95 }],
             ['tankBulletFired', { start: 0.008, stop: 0.307 }],
@@ -151,15 +175,9 @@ export default class Game {
         ]);
 
         this.soundManager = new SoundManager(
-            this.sounds,
-            this.soundsMap,
-            this.audioCtx,
+            audioSpriteUrl,
+            soundsMap
         );
-
-        const response = await fetch(audioSpriteUrl);
-        const arrayBuffer = await response.arrayBuffer();
-        this.audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
-        this.soundManager.setAudioBuffer(this.audioBuffer);
     }
 
     update = (currentTime) => {
@@ -276,7 +294,6 @@ export default class Game {
     }
 
     onStartGame = async () => {
-        await this.audioCtx.resume();
         await this.init();
         this.gameStates.currentState = this.gameStates.run;
         this.gameLoop.start();
