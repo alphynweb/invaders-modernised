@@ -1,8 +1,16 @@
 // Config
-import { CITY, GAME_TEXT, INVADER, INVADERS, LIVES, MOTHERSHIP, SCREEN, TANK } from './config';
-
-// Assets
-import gameSprite from './assets/images/sprite-2.png';
+import {
+    CITY,
+    TEXT,
+    INVADER,
+    INVADERS,
+    LIVES,
+    MOTHERSHIP,
+    SCREEN,
+    TANK,
+    BULLET,
+    BUTTON
+} from './config';
 
 //Utils
 import collisionDetector from './utils/CollisionDetector';
@@ -11,34 +19,36 @@ import inputHandler from './utils/inputHandler';
 // Modules
 import Screen from './modules/Screen/Screen';
 import Tank from './modules/Tank/Tank';
-import Invader from './modules/Invader/Invader';
+// import Invader from './modules/Invader/Invader';
 import Invaders from './modules/invaders/Invaders';
 import Bullets from './modules/Bullets/Bullets';
 import Cities from './modules/Cities/Cities';
 import Mothership from './modules/Mothership/Mothership';
 import Score from './modules/Score/Score';
 import Lives from './modules/Lives/Lives';
-import Button from './modules/Button/Button';
 import GameLoop from './GameLoop';
 import GameStates from './controllers/GameStates';
-import button from './modules/Button/Button';
 
 import IntroScreen from './states/IntroScreen';
 import GameOver from './states/GameOver';
 import FinishLevel from './states/FinishLevel';
 import CollisionSystem from './systems/CollisionSystem';
 import SoundManager from './systems/SoundManager';
+import GraphicsManager from './systems/GraphicsManager';
 
 export default class Game {
     constructor() {
         this.cityConfig = CITY;
-        this.gameTextConfig = GAME_TEXT;
+        this.textConfig = TEXT;
         this.invaderConfig = INVADER;
         this.invadersConfig = INVADERS;
-        this.livesConfig = LIVES;
+        this.bulletConfig = BULLET;
         this.mothershipConfig = MOTHERSHIP;
-        this.screenConfig = SCREEN;
         this.tankConfig = TANK;
+        this.buttonConfig = BUTTON;
+        this.livesConfig = LIVES;
+        this.screenConfig = SCREEN;
+
 
         this.livesLeft = this.livesConfig.lives;
 
@@ -51,17 +61,13 @@ export default class Game {
         this.tank = null;
         this.invaders = null;
         this.bullets = null;
-        this.bulletType = null;
-        this.bulletSubType = null;
-        this.bulletX = null;
-        this.bulletY = null;
         this.cities = null;
         this.mothership = null;
         this.mothershipOldTime = 0;
         this.mothershipNewTime = null;
         this.collisionInfo = null;
         this.now = null;
-        this.invaderMoveTime = this.invadersConfig.moveTime;
+        this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime;
         this.isTankBullet = false;
         this.invaderGroupY = null;
         this.currentLevel = 1;
@@ -80,77 +86,78 @@ export default class Game {
             this.onEndGame
         );
 
-        this.introScreen = new IntroScreen(
-            this.gameTextConfig,
-            this.invaderConfig,
-            this.screen,
-            this.onStartGame
-        );
-
         this.gameOver = new GameOver(
             this.gameTextConfig,
             this.screen
         );
 
-        const img = new Image();
-        img.onload = () => {
-            console.log("Images loaded");
-            this.gameStates.currentState = this.gameStates.intro;
-            this.gameStates.currentState();
-        };
-        img.src = gameSprite;
 
         this.volumeControlContainer = document.getElementById('volume');
         this.volumeControl = document.getElementById('volumeControl');
+
+        this.init();
     }
 
     init = async () => {
+        await this.setupGraphics('/graphics/graphicsSprite.png');
+        await this.graphicsManager.init();
+
         await this.setupAudio('/audio/audioSprite.mp3');
         await this.soundManager.init();
 
-        this.volumeControlContainer.style.visibility = "visible";
-        // this.volumeControl.value = 0;
-
-        // this.volumeControl = document.createElement('input');
-        // this.volumeControl.id = 'volumeControl';
-        // this.volumeControl.type = 'range';
-        // this.volumeControl.min = 0;
-        // this.volumeControl.max = 1;
-        // this.volumeControl.step = 0.01;
-        // this.volumeControl.value = 0;
-
-        // const gameArea = document.getElementById('gameArea');
-        // gameArea.appendChild(this.volumeControl);
-
-        this.volumeControl.oninput = () => {
-            // console.log("Volume = ", this.volumeControl.value);
-            this.soundManager.onSetVolume(this.volumeControl.value);
-        }
-
         this.soundManager.mute();
 
-        this.invaderGroupY = this.invadersConfig.y;
+        this.invaderGroupY = this.invadersConfig.configs['wave1'].y;
         this.livesLeft = this.livesConfig.lives;
 
         this.score = Score();
         this.lives = Lives();
 
-        this.tank = new Tank();
-        this.invaders = new Invaders(this.invaderGroupY);
+        this.tank = new Tank(
+            this.tankConfig.type,
+            'main',
+            this.tankConfig.configs,
+            this.tankConfig.configs['main'].x,
+            this.tankConfig.configs['main'].y,
+            this.screen
+        );
+
+        this.invaders = new Invaders(
+            this.invaderGroupY,
+            this.invadersConfig,
+            this.invaderConfig
+
+        );
+
         this.bullets = new Bullets();
-        this.cities = new Cities();
-        this.mothership = new Mothership();
+
+        this.cities = new Cities(
+            [
+                this.screenConfig,
+                this.cityConfig,
+                this.invaderConfig,
+                this.tankConfig,
+                this.bulletConfig
+            ]
+        );
+
+        this.mothership = new Mothership(
+            this.mothershipConfig.type,
+            'main',
+            this.mothershipConfig.configs,
+            this.mothershipConfig.configs['main'].x,
+            this.mothershipConfig.configs['main'].y
+        );
 
         inputHandler.init();
 
         this.now = 0;
-        this.invaderMoveTime = this.invadersConfig.moveTime - this.invadersConfig.speedIncrease;
+        this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime - this.invadersConfig.configs['wave1'].speedIncrease;
 
         this.invaders.build(this.invaderGroupY);
-        this.cities.build();
-        this.cities.render();
 
-        this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
+        // this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
+        this.mothershipNewTime = 0;
 
         this.collisionSystem = new CollisionSystem(
             this.collisionDetector,
@@ -162,6 +169,37 @@ export default class Game {
             this.mothership,
             this.bullets,
             this.cities
+        );
+
+        this.introScreen = new IntroScreen(
+            this.graphicsManager,
+            this.screen,
+            this.onStartGame,
+            this.textConfig,
+            this.mothershipConfig,
+            this.invaderConfig,
+            this.buttonConfig
+        );
+
+        this.gameStates.currentState = this.gameStates.intro;
+        this.gameStates.currentState();
+    }
+
+    setupGraphics = async (graphicsSpriteUrl) => {
+        const ctx = document.getElementById('screenCanvas').getContext('2d');
+
+        const entityMap = new Map([
+            ['tank', this.tankConfig],
+            ['invader', this.invaderConfig],
+            ['mothership', this.mothershipConfig],
+            ['bullet', this.bulletConfig],
+            ['button', this.buttonConfig]
+        ]);
+
+        this.graphicsManager = new GraphicsManager(
+            graphicsSpriteUrl,
+            entityMap,
+            ctx
         );
     }
 
@@ -182,17 +220,20 @@ export default class Game {
 
     update = (currentTime) => {
         this.purge();
+        this.checkCollisions();
+        this.bullets.move();
+        this.moveInvaders(currentTime);
+        this.moveMothership(currentTime);
 
         if (inputHandler.isKeyPressed('Space')) {
             this.onTankBulletFired();
         }
-
-        this.checkCollisions();
-
-        this.tank.move(inputHandler.currentKeysPressed);
-        this.bullets.move();
-        this.moveInvaders(currentTime);
-        this.moveMothership(currentTime);
+        if (inputHandler.isKeyPressed('ArrowRight')) {
+            this.tank.move('right');
+        }
+        if (inputHandler.isKeyPressed('ArrowLeft')) {
+            this.tank.move('left');
+        }
     }
 
     checkCollisions = () => {
@@ -201,11 +242,12 @@ export default class Game {
 
         const collisionHandlers = {
             "Tank vs Invader": (collision) => {
+                const invader = collision.target;
                 this.score.increase(collision.target.score);
-                collision.target.destroy();
-                this.invaderMoveTime -= this.invadersConfig.speedIncrease;
+                this.invaderMoveTime -= this.invadersConfig.configs['wave1'].speedIncrease;
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.soundManager.play('invaderExplosion');
+                invader.destroy();
             },
             "Tank vs City": (collision) => {
                 collision.target.damage(collision.bullet);
@@ -263,15 +305,17 @@ export default class Game {
     }
 
     render = () => {
-        // console.log("Running render from Game.js");
-
         this.screen.clear();
-        this.tank.render();
-        this.invaders.render();
-        this.bullets.render();
-        this.mothership.render();
-        this.score.render();
-        this.lives.render();
+        this.graphicsManager.render(this.tank);
+        this.invaders.invaderList.forEach((invader) => {
+            this.graphicsManager.render(invader);
+        });
+        this.graphicsManager.render(this.mothership);
+        // this.score.render();
+        // this.lives.render();
+        this.bullets.bulletList.forEach((bullet) => {
+            this.graphicsManager.render(bullet);
+        });
     }
 
     purge = () => {
@@ -283,7 +327,6 @@ export default class Game {
         }
     }
 
-
     onTick = (currentTime) => {
         this.gameStates.currentState(currentTime);
     }
@@ -294,7 +337,14 @@ export default class Game {
     }
 
     onStartGame = async () => {
-        await this.init();
+        this.volumeControlContainer.style.visibility = "visible";
+        this.volumeControl.oninput = () => {
+            this.soundManager.onSetVolume(this.volumeControl.value);
+        }
+
+        this.cities.build();
+        this.cities.render();
+
         this.gameStates.currentState = this.gameStates.run;
         this.gameLoop.start();
     }
@@ -326,7 +376,7 @@ export default class Game {
             this.gameStates.currentState = this.gameStates.run;
             this.tank.reset();
         }
-        this.tank.render();
+        this.graphicsManager.render(this.tank);
     }
 
     onEndGame = () => {
@@ -335,18 +385,17 @@ export default class Game {
         this.gameOver.render(this.score, this.startButton);
     }
 
-
     createInvaderBullets = () => {
         // Check how many invader bullets are currently in play
-        let invaderBullets = this.bullets.bulletList.filter((bullet) => bullet.type === 'invader');
+        let invaderBullets = this.bullets.bulletList.filter((bullet) => bullet.subType.slice(0, 7) === 'invader');
 
         let invaderIndex;
         let invader;
         let bottomInvIndex;
         let bottomInv;
-        let newInvaderBullet;
+
         // If it's less than 2(? Arbitrary) for example, then create more randomly so there are always 2
-        let noBulletsToCreate = 2 - invaderBullets.length;
+        let noBulletsToCreate = 0 - invaderBullets.length;
 
         for (let i = 0; i < noBulletsToCreate; i++) {
             // Choose random invader - the bottom one of whatever column
@@ -362,9 +411,16 @@ export default class Game {
 
             bottomInv = this.invaders.invaderList[bottomInvIndex];
 
-            // Create new bullet
+            const subType = bottomInv.subType;
+
             if (!bottomInv.isAnimating) {
-                this.bullets.addBullet('invader', bottomInv.type, bottomInv.x + (bottomInv.width / 2), bottomInv.y + bottomInv.height);
+                this.bullets.addBullet(
+                    'bullet',
+                    subType,
+                    this.bulletConfig.configs,
+                    bottomInv.x + (bottomInv.width / 2),
+                    bottomInv.y + bottomInv.height
+                );
             }
         }
     }
@@ -376,43 +432,46 @@ export default class Game {
 
         if (mothershipCenter === tankCenter || (mothershipCenter < tankCenter + 4 && mothershipCenter > tankCenter - 4)) {
             // Create mothership bomb in bullets list if there isn't already one
-            const mothershipBullets = this.bullets.bulletList.filter((bullet) => bullet.type === 'mothership');
+            const mothershipBullets = this.bullets.bulletList.filter((bullet) => bullet.subType === 'mothership');
 
             if (mothershipBullets.length === 0) {
-                this.bullets.addBullet('mothership', null, mothershipCenter, this.mothership.y + this.mothership.height);
+                this.bullets.addBullet(
+                    'bullet',
+                    'mothership',
+                    this.bulletConfig.configs,
+                    mothershipCenter,
+                    this.mothership.y + this.mothership.height
+                );
             }
-
-            const t = 0;
         }
     }
 
     onTankBulletFired() {
-        this.isTankBullet = this.bullets.bulletList.find((bullet) => {
-            return bullet.type === 'tank';
+        const isTankBullet = this.bullets.bulletList.find((bullet) => {
+            return bullet.subType === 'tank';
         });
-        if (!this.isTankBullet) {
-            this.bulletType = "tank";
-            this.bulletSubType = null;
-            this.bulletX = this.tank.x + (TANK.width / 2) - (TANK.bulletInfo.width / 2);
-            this.bulletY = this.tank.y - TANK.bulletInfo.height;
+        if (!isTankBullet) { // If no tank bullet currently in play
+            const type = 'bullet';
+            const subType = 'tank';
+            const x = this.tank.x + (this.tankConfig.configs['main'].width / 2) - (this.bulletConfig.configs[subType].width / 2);
+            const y = this.tank.y - this.bulletConfig.configs[subType].height;
             this.bullets.addBullet(
-                this.bulletType,
-                this.bulletSubType,
-                this.bulletX,
-                this.bulletY
-            )
-            this.tank.animationType = 'shoot';
-            this.tank.animationFrame = 1;
+                type,
+                subType,
+                this.bulletConfig.configs,
+                x,
+                y
+            );
+            this.tank.animationType = 'shooting';
             this.soundManager.play('tankBulletFired');
         }
     }
 
-
     moveMothership = (currentTime) => {
-        if (this.mothership.isActive && !this.mothership.isExploding) {
+        if (this.mothership.isActive && !this.mothership.animationType !== 'exploding') {
             this.createMothershipBullets();
             this.mothership.move();
-            if (this.mothership.x > this.screenConfig.width) {
+            if (this.mothership.x > this.screenConfig.configs['main'].width) {
                 this.mothership.remove();
                 this.resetMothershipTime();
             }
@@ -448,6 +507,7 @@ export default class Game {
     }
 
     resetMothershipTime = () => {
-        this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000);
+        // this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000);
+        this.mothershipNewTime = 0;
     }
 }

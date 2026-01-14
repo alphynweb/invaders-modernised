@@ -1,27 +1,43 @@
-import Ctx from '../Ctx/Ctx';
+export default class Button {
+    constructor(type, subType, configs, x, y) {
+        const config = configs[subType];
+        this.type = type;
+        this.subType = subType;
+        this.score = config.score;
+        this.width = config.width;
+        this.height = config.height;
+        this.x = x;
+        this.y = y;
 
-const button = (x, y, width, height, text, color = '#fff', id, cssClass) => {
-    return {
-        x,
-        y,
-        width,
-        height,
-        text,
-        color,
-        id,
-        cssClass,
-        ctx: Ctx(),
-        render: function () {
-            const gameArea = document.getElementById('gameArea');
-            const btn = document.createElement('button');
-            btn.id = this.id;
-            btn.classList.add(this.cssClass);
-            btn.innerHTML = text;
-            btn.style.width = this.width;
-            btn.style.height = this.height;
-            gameArea.appendChild(btn);
-        }
-    };
-};
+        this.animationType = 'normal';
+        this.spriteInfo = config.spriteInfo;
+    }
+}
 
-export default button;
+// import Ctx from '../Ctx/Ctx';
+
+// const button = (x, y, width, height, text, color = '#fff', id, cssClass) => {
+//     return {
+//         x,
+//         y,
+//         width,
+//         height,
+//         text,
+//         color,
+//         id,
+//         cssClass,
+//         type: 'startButton',
+//         animationType: 'normal',
+//         btn: null,
+//         onHover: function() {
+//             console.log('Hovering on button');
+//             this.animationType = 'hover';
+//         },
+//         onClick: function () {
+//             console.log('Button Clicked');
+//             this.animationType = 'pressed';
+//         }
+//     };
+// };
+
+// export default button;

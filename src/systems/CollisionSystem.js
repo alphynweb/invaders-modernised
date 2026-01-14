@@ -1,7 +1,17 @@
 export default class CollisionSystem {
-    constructor(collisionDetector, tankConfig, invaderConfig, cityConfig, tank, invaders, mothership, bullets, cities) {
+    constructor(
+        collisionDetector,
+        tankConfig,
+        invadersConfigArray,
+        cityConfig,
+        tank,
+        invaders,
+        mothership,
+        bullets,
+        cities
+    ) {
         this.tankConfig = tankConfig;
-        this.invaderConfig = invaderConfig;
+        this.invadersConfigArray = invadersConfigArray;
         this.cityConfig = cityConfig;
 
         this.collisionDetector = collisionDetector;
@@ -28,7 +38,7 @@ export default class CollisionSystem {
 
         if (this.bullets.bulletList.length) {
             tankBulletIndex = this.bullets.bulletList.findIndex((bullet) => {
-                return bullet.type === 'tank';
+                return bullet.subType === 'tank';
             });
         }
 
@@ -68,7 +78,10 @@ export default class CollisionSystem {
                     // Area to check imagedata of
                     const topLeftX = tankBullet.x - city.x; // Bullet x
                     const topLeftY = tankBullet.y - city.y - 1; // 1 px above bullet y
-                    const width = this.tankConfig.bulletInfo.width;
+                    
+                    // const width = this.tankConfig.bulletInfo.width;
+                    const width = tankBullet.width;
+                    
                     const height = 1;
                     const imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
 
@@ -126,9 +139,10 @@ export default class CollisionSystem {
 
             // Run through any invaders bullets in bulletsList
             this.bullets.bulletList.forEach((bullet, index) => {
-                if (bullet.type === 'invader') {
-                    invader = this.invaderConfig.find((inv) => inv.type === bullet.subType);
-                    bulletInfo = invader.bulletInfo;
+                if (bullet.subType.slice(0, 7) === 'invader') {
+                    // invader = this.invadersConfigArray.find(inv => inv.type === bullet.type.replace('_bullet', ''));
+                    // invader = this.invadersConfigArray.configs[bullet.subType];
+                    // bulletInfo = invader.bulletInfo;
 
                     // Invader vs Tank
                     collisionInfo = this.collisionDetector.collisionInfo(bullet, this.tank);
@@ -151,8 +165,8 @@ export default class CollisionSystem {
                             // Check the area directly above the bullet to see whether it's solid
                             // Area to check imagedata of
                             topLeftX = bullet.x - city.x; // Bullet x
-                            topLeftY = bullet.y - city.y + bulletInfo.height; // 1 px below bullet y
-                            width = bulletInfo.width;
+                            topLeftY = bullet.y - city.y + bullet.height; // 1 px below bullet y
+                            width = bullet.width;
                             height = 1;
                             imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
 
@@ -183,7 +197,7 @@ export default class CollisionSystem {
         let collisionObj;
 
         this.bullets.bulletList.forEach((bullet, index) => {
-            if (bullet.type === 'mothership') {
+            if (bullet.subType === 'mothership') {
                 collisionInfo = this.collisionDetector.collisionInfo(bullet, this.tank);
 
                 if (collisionInfo.didCollide && !this.tank.isAnimating) {

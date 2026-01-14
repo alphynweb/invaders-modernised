@@ -3,110 +3,185 @@ import Mothership from '../modules/Mothership/Mothership';
 import Button from '../modules/Button/Button';
 
 export default class IntroScreen {
-    constructor(gameTextConfig, invaderConfig, screen, startGame) {
-        this.gameTextConfig = gameTextConfig;
+    constructor(
+        graphicsManager,
+        screen,
+        startGame,
+        textConfig,
+        mothershipConfig,
+        invaderConfig,
+        buttonConfig
+    ) {
+        this.graphicsManager = graphicsManager;
+        this.textConfig = textConfig;
+        this.mothershipConfig = mothershipConfig;
         this.invaderConfig = invaderConfig;
+        this.buttonConfig = buttonConfig;
         this.screen = screen;
         this.ctx = screen.ctx;
-        this.ctx.font = this.gameTextConfig.font;
-        this.ctx.fillStyle = this.gameTextConfig.fillStyle;
+        this.font = this.textConfig.configs['gameText'].font;
+        this.arrowFont = this.textConfig.configs['gameText'].arrowFont;
+        this.fillStyle = this.textConfig.configs['gameText'].fillStyle;
         this.x = 300;
         this.textX = 600;
         this.verticalSpacing = 60;
+        this.y = this.verticalSpacing;
         this.currentYPost = 0;
 
-        // Functions passed in from Game.js
         this.startGame = startGame;
     }
 
-    render() {
+    render = () => {
         this.renderInvadersInfo();
         this.renderMothershipInfo();
         this.renderStartButton();
         this.renderInstructions();
     }
 
-    renderInvadersInfo() {
-        this.invaderConfig.forEach((invader, index) => {
-            const y = (index + 1) * this.verticalSpacing;
-            const type = invader.type;
-            const invaderInfo = invader;
-            const introInvader = new Invader(
-                type,
-                null,
-                null,
+    renderInvadersInfo = () => {
+        let index = 1;
+        for (const [subType, config] of Object.entries(this.invaderConfig.configs)) {
+
+            const invader = new Invader(
+                this.invaderConfig.type,
+                subType,
+                this.invaderConfig.configs,
                 this.x,
-                y,
-                null
+                this.y
             )
-            introInvader.x = this.x;
-            introInvader.y = y;
-            introInvader.spriteX = invader.spriteX;
-            introInvader.spriteY = invader.spriteY;
-            introInvader.score = invader.score;
 
+            this.graphicsManager.render(invader);
 
-            // Render invader
-            introInvader.render();
+            this.graphicsManager.renderText(
+                this.font,
+                this.fillStyle,
+                this.textX,
+                this.y + (invader.height / 2),
+                "Score " + invader.score
+            );
 
-            // Render text
-            this.ctx.fillText("Score " + introInvader.score, this.textX, (index + 1) * this.verticalSpacing + introInvader.height);
+            index++;
+            this.y += this.verticalSpacing;
+        }
+    }
 
-            this.currentYPos = (index + 1) * this.verticalSpacing;
+    renderMothershipInfo = () => {
+        let index = 1;
+        for (const [subType, config] of Object.entries(this.mothershipConfig.configs)) {
+            const y = index * this.verticalSpacing;
+
+            const mothership = new Mothership(
+                this.mothershipConfig.type,
+                subType,
+                this.mothershipConfig.configs,
+                this.x,
+                this.y
+            )
+
+            this.graphicsManager.render(mothership);
+
+            this.graphicsManager.renderText(
+                this.font,
+                this.fillStyle,
+                this.textX,
+                this.y + (mothership.height / 2),
+                "Score ???"
+            )
+
+            index++;
+        }
+    }
+
+    renderStartButton = () => {
+        const x = 420;
+        const y = 400;
+        const subType = 'startButton';
+        const animationType = 'normal';
+        const startButtonConfigs = this.buttonConfig.configs[subType].spriteInfo[animationType];
+        const width = startButtonConfigs.width;
+        const height = startButtonConfigs.height;
+
+        const startButton = new Button(
+            this.buttonConfig.type,
+            subType,
+            this.buttonConfig.configs,
+            x,
+            y
+        );
+
+        this.graphicsManager.render(startButton);
+
+        // const startButton = button(x, y, width, height, 'START', '#0f0', 'startButton', 'button');
+        // this.graphicsManager.render(startButton);
+
+        const clickListen = (event) => {
+            const xClicked = event.clientX;
+            const yClicked = event.clientY;
+
+            if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > y) {
+                event.currentTarget.removeEventListener('click', clickListen);
+                this.startGame();
+            }
+        }
+
+        this.screen.screen.addEventListener('click', (event) => {
+            clickListen(event);
         });
     }
 
-    renderMothershipInfo() {
-        const mothership = new Mothership();
+    renderInstructions = () => {
+        let y = 550;
 
-        mothership.x = this.x - 6;
-        mothership.y = this.currentYPos + this.verticalSpacing + 6;
-        mothership.isActive = true;
+        this.graphicsManager.renderText(
+            this.arrowFont,
+            this.fillStyle,
+            this.x,
+            y,
+            String.fromCharCode('8592')
+        );
 
-        mothership.render();
+        this.graphicsManager.renderText(
+            this.font,
+            this.fillStyle,
+            this.textX,
+            y,
+            'Move Tank Left'
+        );
 
-        this.ctx.fillText("Score ???", this.textX, this.currentYPos + this.verticalSpacing + mothership.height);
+        y += this.verticalSpacing;
 
-    }
+        this.graphicsManager.renderText(
+            this.arrowFont,
+            this.fillStyle,
+            this.x,
+            y,
+            String.fromCharCode('8594')
+        );
 
-    renderStartButton() {
-        const startButton = Button(100, 200, 200, 60, 'START', '#0f0', 'startButton', 'button');
-        startButton.render();
+        this.graphicsManager.renderText(
+            this.font,
+            this.fillStyle,
+            this.textX,
+            y,
+            'Move Tank Right'
+        );
 
-        const startButtonElement = document.getElementById('startButton');
+        y += this.verticalSpacing;
 
-        startButtonElement.addEventListener('click', () => {
-            console.log("Button clicekd");
-            startButtonElement.classList.add('hide');
-            this.startGame();
-        });
-    }
+        this.graphicsManager.renderText(
+            this.font,
+            this.fillStyle,
+            this.x,
+            y,
+            'Space Bar'
+        );
 
-    renderInstructions() {
-        let instructionsY = 550;
-
-        this.ctx.font = this.gameTextConfig.introScreenArrowFont;
-
-        this.ctx.fillText(String.fromCharCode('8592'), this.x, instructionsY);
-
-        this.ctx.font = this.gameTextConfig.font;
-
-        this.ctx.fillText("Move tank left", this.textX, instructionsY);
-
-        instructionsY += this.verticalSpacing;
-
-        this.ctx.font = this.gameTextConfig.introScreenArrowFont;
-
-        this.ctx.fillText(String.fromCharCode('8594'), this.x, instructionsY);
-
-        this.ctx.font = this.gameTextConfig.font;
-
-        this.ctx.fillText("Move tank right", this.textX, instructionsY);
-
-        instructionsY += this.verticalSpacing;
-
-        this.ctx.fillText("Space bar", this.x, instructionsY);
-
-        this.ctx.fillText("Fire", this.textX, instructionsY);
+        this.graphicsManager.renderText(
+            this.font,
+            this.fillStyle,
+            this.textX,
+            y,
+            'Fire'
+        );
     }
 }

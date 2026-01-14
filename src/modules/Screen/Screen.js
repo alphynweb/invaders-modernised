@@ -3,8 +3,8 @@ import * as config from '../../config';
 const screen = () => {
     const newScreen = document.createElement('canvas');
     newScreen.id = "screenCanvas";
-    newScreen.width = config.SCREEN.width;
-    newScreen.height = config.SCREEN.height;
+    newScreen.width = config.SCREEN.configs.main.width;
+    newScreen.height = config.SCREEN.configs.main.height;
     newScreen.style.backgroundColor = "transparent";
     newScreen.style.position = "absolute";
     newScreen.style.top = "0";
@@ -12,12 +12,12 @@ const screen = () => {
     
     return {
         screen: newScreen,
-        width: config.SCREEN.width,
-        height: config.SCREEN.height,
+        width: config.SCREEN.configs.main.width,
+        height: config.SCREEN.configs.main.height,
         ctx: newScreen.getContext('2d'),
         render: function() {
             const gameArea = document.getElementById('gameArea');
-            gameArea.style.width = config.SCREEN.width + 'px';
+            gameArea.style.width = config.SCREEN.configs.main.width + 'px';
             gameArea.style.position = 'relative';
             gameArea.appendChild(this.screen);
         },

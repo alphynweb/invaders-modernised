@@ -1,14 +1,14 @@
-import { GAME_TEXT, LIVES, TANK } from '../../config';
+import { TEXT, LIVES, TANK } from '../../config';
 import Ctx from '../Ctx/Ctx';
 import Sprite from '../Sprite/Sprite';
 
 const lives = () => {
     return {
         x: 600,
-        y: GAME_TEXT.y,
+        y: TEXT.y,
         currentLives: LIVES.lives,
         ctx: Ctx(),
-        font: GAME_TEXT.font,
+        font: TEXT.font,
         sprite: Sprite(),
         loseLife: function () {
             this.currentLives--;

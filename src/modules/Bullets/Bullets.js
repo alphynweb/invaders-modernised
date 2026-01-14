@@ -1,56 +1,30 @@
-import { INVADER, MOTHERSHIP, SCREEN, TANK } from '../../config';
+import { SCREEN } from '../../config';
 import Bullet from '../Bullet/Bullet';
 
 export default class Bullets {
-    constructor() {
+    constructor(screen) {
+        this.screen = this.screen;
         this.bulletList = [];
     }
 
-    addBullet(type, subType, x, y) {
-        let newBullet,
-            bulletInfo,
-            width,
-            height,
-            direction,
-            speed,
-            spriteX,
-            spriteY;
+    addBullet(type, subType, configs, x, y) {
+        const config = configs[subType];
+        const direction = config.direction;
 
-        switch (type) {
-            case "tank":
-                bulletInfo = TANK.bulletInfo;
-                direction = "up";
-                break;
-            case "invader":
-                const invaderInfo = INVADER.find((inv) => inv.type === subType);
-                bulletInfo = invaderInfo.bulletInfo;
-                direction = "down";
-                break;
-            case "mothership":
-                bulletInfo = MOTHERSHIP.bulletInfo;
-                direction = "down";
-                break;
-            default:
-                break;
-        }
+        const animationType = 'normal';
 
-        width = bulletInfo.width;
-        height = bulletInfo.height;
-        speed = bulletInfo.speed;
-        spriteX = bulletInfo.spriteX;
-        spriteY = bulletInfo.spriteY;
+        const width = config.spriteInfo[animationType].width;
+        const height = config.spriteInfo[animationType].height;
+        const speed = config.speed;
+        const spriteX = config.spriteInfo[animationType].x;
+        const spriteY = config.spriteInfo[animationType].y;
 
-        newBullet = new Bullet(
+        const newBullet = new Bullet(
             type,
             subType,
+            configs,
             x,
-            y,
-            width,
-            height,
-            direction,
-            speed,
-            spriteX,
-            spriteY
+            y
         );
         this.bulletList.push(newBullet);
     }
@@ -66,11 +40,16 @@ export default class Bullets {
     move() {
         this.bulletList.forEach((bullet, index) => {
             // If tank bullet reaches top of screen, remove it from bulletList
-            if (bullet.type === 'tank' && bullet.y < 0) {
+            if (bullet.subType === 'tank' && bullet.y < 0) {
                 this.removeBullet(index);
             }
             // If invader bullet reaches bottom of screen, remove it from bulletList
-            if ((bullet.type === 'invader' || bullet.type === 'mothership') && bullet.y > SCREEN.height) {
+            if ((
+                bullet.subType === 'invader1' ||
+                bullet.subType === 'invader2' ||
+                bullet.subType === 'invader3' ||
+                bullet.subType === 'mothership'
+            ) && bullet.y > SCREEN.configs['main'].height) {
                 this.removeBullet(index);
             }
             bullet.move();

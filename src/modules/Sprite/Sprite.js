@@ -1,4 +1,4 @@
-import gameSprite from '../../assets/images/sprite-2.png';
+import gameSprite from '/public/graphics/graphicsSprite.png';
 
 const sprite = function() {
     let img = new Image();

@@ -2,31 +2,61 @@ import { INVADER, TANK, CITY } from '../../config';
 import Sprite from '../Sprite/Sprite';
 
 export default class City {
-    constructor(canvasId, x) {
-        this.config = CITY;
+    static cityCollisionMap = new Map([
+        [
+            subType => subType.startsWith('invader'),
+            (city, collisionObject, configs) => {
+                console.log("Type starts with invader");
+                const bulletConfigs = configs.find(c => c.type === 'bullet').configs[collisionObject.subType];
+                const topLeftY = collisionObject.y - city.y + collisionObject.height - bulletConfigs.height;
+                return topLeftY;
+                debugger;
+            }
+        ],
+        [
+            subType => subType === 'tank',
+            (city, collisionObject, configs) => {
+                const tankConfigs = configs.find(c => c.type === 'tank').configs['main'];
+                const topLeftY = collisionObject.y - city.y - city.spriteInfo.damageHeight + tankConfigs.speed;
+                console.log("Type is ttank bullet");
+                return topLeftY;
+                debugger;
+            }
+        ],
+        [
+            subType => subType === 'mothership',
+            (city, collisionObject, configs) => {
+                console.log("Type is mothership bullet");
+                debugger;
+            }
+        ]
+    ]);
+
+    constructor(canvasId, x, configs) {
+        this.configs = configs;
+        this.cityConfig = this.configs.find(config => config.type === 'city').configs['main'];
         this.canvasId = canvasId;
         this.x = x;
-        this.y = this.config.y;
+        this.y = this.cityConfig.y;
         this.ctx = document.getElementById(canvasId).getContext('2d');
         this.sprite = Sprite();
-        this.width = this.config.width;
-        this.height = this.config.height;
-        this.spriteInfo = this.config.spriteInfo;
+        this.width = this.cityConfig.width;
+        this.height = this.cityConfig.height;
+        this.spriteInfo = this.cityConfig.spriteInfo;
     }
 
     damage(collisionObject) { // collisionObject = Bullet tyep that collided with city
         const topLeftX = collisionObject.x - this.x - (this.spriteInfo.damageWidth / 2);
         let topLeftY;
-        switch (collisionObject.type) {
-            case 'tank':
-                topLeftY = collisionObject.y - this.y - this.spriteInfo.damageHeight + TANK.bulletInfo.speed;
+        const subType = collisionObject.subType;
+
+        for (const [matchFn, handlerFn] of City.cityCollisionMap) {
+            if (matchFn(subType)) {
+                topLeftY = handlerFn(this, collisionObject, this.configs);
                 break;
-            case 'invader':
-                // Establish what type of Invader fired the bullet
-                const invaderType = INVADER.find((inv) => inv.type === collisionObject.subType);
-                topLeftY = collisionObject.y - this.y + collisionObject.height - invaderType.bulletInfo.height;
-                break;
+            }
         }
+
         this.ctx.globalCompositeOperation = 'destination-out';
         this.ctx.drawImage(
             this.sprite,

@@ -1,0 +1,60 @@
+export default class GraphicsManager {
+    constructor(spriteUrl, entityMap, ctx) {
+        this.spriteUrl = spriteUrl;
+        this.entityMap = entityMap;
+        this.ctx = ctx;
+        this.sprite = null;
+    }
+
+    async init() {
+        try {
+            this.sprite = await this.loadImage(this.spriteUrl);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async loadImage(imageUrl) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject("Image failed to load");
+            img.src = imageUrl;
+        });
+    }
+
+    render = (entity) => {
+        const entityInfo = this.entityMap.get(entity.type);
+        const entityConfigs = entityInfo.configs;
+        const entityConfig = entityConfigs[entity.subType];
+        const animationType = entity.animationType;
+
+        if (!this.sprite) return;
+        if (!entityConfig) return;
+
+        const sx = entityConfig.spriteInfo[animationType].x;
+        const sy = entityConfig.spriteInfo[animationType].y;
+        const width = entityConfig.spriteInfo[animationType].width;
+        const height = entityConfig.spriteInfo[animationType].height;
+        const dx = entity.x;
+        const dy = entity.y;
+
+        this.ctx.drawImage(
+            this.sprite,
+            sx,
+            sy,
+            width,
+            height,
+            dx,
+            dy,
+            width,
+            height
+        )
+    }
+
+    renderText = (font, fillStyle, x, y, text) => {
+        this.ctx.font = font;
+        this.ctx.fillStyle = fillStyle;
+        this.ctx.fillText(text, x, y);
+    }
+}
