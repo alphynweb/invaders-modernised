@@ -14,6 +14,7 @@ export default class Mothership {
         this.animationFrame = 0;
         this.animationFrames = config.spriteInfo[this.animationType].length;
         this.frameTimer = 0;
+        this.frameLengths = config.frameLengths;
         this.spriteInfo = config.spriteInfo;
     }
 
@@ -47,9 +48,11 @@ export default class Mothership {
     update = (delta) => {
         if (this.animationType === 'normal') {
             this.frameTimer += delta;
-            const currentFrameDuration = this.spriteInfo[this.animationType][this.animationFrame].frameLength;
+
+            const currentFrame = this.spriteInfo[this.animationType][this.animationFrame];
+            const currentFrameDuration = currentFrame.frameLength ?? this.frameLengths[this.animationType];
+
             if (this.frameTimer >= currentFrameDuration) {
-                console.log("Frame duration");
                 this.frameTimer = 0;
                 this.animationFrame++;
 

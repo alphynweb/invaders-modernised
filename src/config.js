@@ -366,7 +366,10 @@ export const MOTHERSHIP = {
             speed: 2,
             spriteX: 332,
             spriteY: 0,
-            noExplodingFrames: 100,
+            frameLengths: {
+                normal: 500,
+                exploding: 500
+            },
             spriteInfo: {
                 normal: [
                     {
@@ -374,28 +377,25 @@ export const MOTHERSHIP = {
                         y: 0,
                         width: 68,
                         height: 27,
-                        frameLength: 500
                     },
                     {
                         x: 332,
                         y: 27,
                         width: 68,
                         height: 27,
-                        frameLength: 500
                     },
                     {
                         x: 332,
                         y: 54,
                         width: 68,
                         height: 27,
-                        frameLength: 500
+                        frameLength: 2000
                     },
                     {
                         x: 332,
                         y: 81,
                         width: 68,
                         height: 27,
-                        frameLength: 500
                     }
                 ],
                 exploding: {
