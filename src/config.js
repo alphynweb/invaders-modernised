@@ -199,14 +199,22 @@ export const INVADER = {
             height: 32,
             score: 50,
             animationType: 'normal',
-            explosionTime: 500,
+            explosionDuration: 500,
             spriteInfo: {
-                normal: {
-                    x: 140,
-                    y: 0,
-                    width: 32,
-                    height: 32
-                },
+                normal: [
+                    {
+                        x: 140,
+                        y: 0,
+                        width: 32,
+                        height: 32
+                    },
+                    {
+                        x: 140,
+                        y: 32,
+                        width: 32,
+                        height: 32
+                    }
+                ],
                 exploding: {
                     x: 756,
                     y: 0,
@@ -221,14 +229,22 @@ export const INVADER = {
             height: 32,
             score: 50,
             animationType: 'normal',
-            explosionTime: 500,
+            explosionDuration: 500,
             spriteInfo: {
-                normal: {
-                    x: 172,
-                    y: 0,
-                    width: 44,
-                    height: 32
-                },
+                normal: [
+                    {
+                        x: 172,
+                        y: 0,
+                        width: 44,
+                        height: 32
+                    },
+                    {
+                        x: 172,
+                        y: 0,
+                        width: 44,
+                        height: 32
+                    }
+                ],
                 exploding: {
                     x: 756,
                     y: 0,
@@ -242,14 +258,22 @@ export const INVADER = {
             height: 32,
             score: 50,
             animationType: 'normal',
-            explosionTime: 500,
+            explosionDuration: 500,
             spriteInfo: {
-                normal: {
-                    x: 216,
-                    y: 0,
-                    width: 48,
-                    height: 32
-                },
+                normal: [
+                    {
+                        x: 216,
+                        y: 0,
+                        width: 48,
+                        height: 32
+                    },
+                    {
+                        x: 216,
+                        y: 0,
+                        width: 48,
+                        height: 32
+                    },
+                ],
                 exploding: {
                     x: 756,
                     y: 0,

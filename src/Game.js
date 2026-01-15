@@ -234,6 +234,9 @@ export default class Game {
         if (inputHandler.isKeyPressed('ArrowLeft')) {
             this.tank.move('left');
         }
+
+        const delta = this.gameLoop.delta;
+        this.invaders.update(delta);
     }
 
     checkCollisions = () => {

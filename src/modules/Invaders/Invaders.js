@@ -74,6 +74,9 @@ export default class Invaders {
     }
 
     move = () => {
+        const isExploding = this.invaderList.find(invader => invader.animationType === 'exploding');
+        if (isExploding) return;
+
         this.currentMoveSound = this.moveSounds[this.currentMoveSoundIndex];
         this.currentMoveSoundIndex++;
 
@@ -110,5 +113,9 @@ export default class Invaders {
         this.invaderList.forEach((invader) => {
             invader.render();
         });
+    }
+
+    update = (delta) => {
+        this.invaderList.forEach(invader => invader.update(delta));
     }
 }

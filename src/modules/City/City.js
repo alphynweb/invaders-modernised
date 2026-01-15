@@ -6,7 +6,6 @@ export default class City {
         [
             subType => subType.startsWith('invader'),
             (city, collisionObject, configs) => {
-                console.log("Type starts with invader");
                 const bulletConfigs = configs.find(c => c.type === 'bullet').configs[collisionObject.subType];
                 const topLeftY = collisionObject.y - city.y + collisionObject.height - bulletConfigs.height;
                 return topLeftY;
@@ -18,7 +17,6 @@ export default class City {
             (city, collisionObject, configs) => {
                 const tankConfigs = configs.find(c => c.type === 'tank').configs['main'];
                 const topLeftY = collisionObject.y - city.y - city.spriteInfo.damageHeight + tankConfigs.speed;
-                console.log("Type is ttank bullet");
                 return topLeftY;
                 debugger;
             }
@@ -26,7 +24,6 @@ export default class City {
         [
             subType => subType === 'mothership',
             (city, collisionObject, configs) => {
-                console.log("Type is mothership bullet");
                 debugger;
             }
         ]

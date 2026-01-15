@@ -9,7 +9,8 @@ export default class Invader {
         this.score = config.score;
         this.width = config.width;
         this.height = config.height;
-        this.explosionTime = config.explosionTime;
+        this.explosionDuration = config.explosionDuration;
+        this.explosionTimer = 0;
         this.x = x;
         this.y = y;
         this.isActive = true; // Determines whether invader is active in game (switch to false when animating explosion etc)
@@ -17,6 +18,7 @@ export default class Invader {
         this.direction = 'right';
         this.animationType = 'normal';
         this.spriteInfo = config.spriteInfo;
+        this.animationFrame = 0;
     }
 
     move(direction) {
@@ -26,11 +28,25 @@ export default class Invader {
             this.y += INVADERS.configs['wave1'].shiftDownSpeed;
         }
 
-        this.animationFrame++;
+        if (this.animationFrame < (this.spriteInfo[this.animationType].length - 1)) {
+            this.animationFrame++;
+        } else {
+            this.animationFrame = 0;
+        }
     }
 
     destroy() {
         this.animationType = 'exploding';
-        this.isActive = false;
+    }
+
+    update(delta) {
+        if (this.animationType === 'exploding') {
+            this.explosionTimer += delta;
+            if (this.explosionTimer >= this.explosionDuration) {
+                this.explosionTimer = 0;
+                this.isActive = false;
+            }
+        }
+
     }
 }

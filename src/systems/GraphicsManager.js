@@ -32,10 +32,21 @@ export default class GraphicsManager {
         if (!this.sprite) return;
         if (!entityConfig) return;
 
-        const sx = entityConfig.spriteInfo[animationType].x;
-        const sy = entityConfig.spriteInfo[animationType].y;
-        const width = entityConfig.spriteInfo[animationType].width;
-        const height = entityConfig.spriteInfo[animationType].height;
+        let sx, sy, width, height;
+
+        if (Array.isArray(entityConfig.spriteInfo[animationType])) {
+            const animationFrame = entity.animationFrame;
+            sx = entityConfig.spriteInfo[animationType][animationFrame].x;
+            sy = entityConfig.spriteInfo[animationType][animationFrame].y;
+            width = entityConfig.spriteInfo[animationType][animationFrame].width;
+            height = entityConfig.spriteInfo[animationType][animationFrame].height;
+        } else {
+            sx = entityConfig.spriteInfo[animationType].x;
+            sy = entityConfig.spriteInfo[animationType].y;
+            width = entityConfig.spriteInfo[animationType].width;
+            height = entityConfig.spriteInfo[animationType].height;
+        }
+
         const dx = entity.x;
         const dy = entity.y;
 
