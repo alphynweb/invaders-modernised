@@ -56,7 +56,7 @@ export default class Game {
         this.screen.render();
 
 
-        this.score = 0;
+        // this.score = 0;
         this.lives = null;
         this.tank = null;
         this.invaders = null;
@@ -110,7 +110,7 @@ export default class Game {
         this.invaderGroupY = this.invadersConfig.configs['wave1'].y;
         this.livesLeft = this.livesConfig.lives;
 
-        this.score = Score();
+        this.score = new Score();
         this.lives = Lives();
 
         this.tank = new Tank(
@@ -261,7 +261,7 @@ export default class Game {
                 this.mothership.destroy();
                 this.resetMothershipTime();
                 this.bullets.removeBullet(collision.bulletIndex);
-                this.score.increase(500);
+                this.score.increase(collision.target.score);
                 this.soundManager.play('mothershipExplosion');
             },
             "Invader vs Tank": (collision) => {
@@ -332,6 +332,16 @@ export default class Game {
         this.bullets.bulletList.forEach((bullet) => {
             this.graphicsManager.render(bullet);
         });
+
+
+        const scoreTextConfig = this.textConfig.configs['score'];
+        this.graphicsManager.renderText(
+            scoreTextConfig.font,
+            scoreTextConfig.fillStyle,
+            scoreTextConfig.x,
+            scoreTextConfig.y,
+            'Score: ' + this.score.currentScore
+        );
     }
 
     purge = () => {

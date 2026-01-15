@@ -13,10 +13,15 @@ export const TEXT = {
     type: 'text',
     configs: {
         gameText: {
-            subType: 'game',
             y: 40, // Height at which lives and score etc are rendered
             font: 'bold 20px arial',
             arrowFont: 'bold 40px arial',
+            fillStyle: '#fff'
+        },
+        score: {
+            x: 50,
+            y: 40,
+            font: 'bold 20px arial',
             fillStyle: '#fff'
         }
     }
@@ -116,7 +121,7 @@ export const CITY = {
 export const INVADERS = {
     type: 'invaders',
     configs: {
-        'wave1': {
+        wave1: {
             moveSpeed: 20, // Distance invaders move horizontally
             shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
             y: 100,
