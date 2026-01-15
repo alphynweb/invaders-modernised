@@ -367,9 +367,9 @@ export const MOTHERSHIP = {
             spriteX: 332,
             spriteY: 0,
             frameLengths: {
-                normal: 500,
-                exploding: 500
+                normal: 500
             },
+            explosionDuration: 2000,
             spriteInfo: {
                 normal: [
                     {

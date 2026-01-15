@@ -16,9 +16,12 @@ export default class Mothership {
         this.frameTimer = 0;
         this.frameLengths = config.frameLengths;
         this.spriteInfo = config.spriteInfo;
+        this.explosionDuration = config.explosionDuration;
+        this.explosionTimer = 0;
     }
 
     move() {
+        if (this.animationType === 'exploding') return;
         this.x += this.speed;
     }
 
@@ -34,9 +37,7 @@ export default class Mothership {
     }
 
     destroy() {
-        // Set isAnimating frame to start animation
         this.animationType = 'exploding';
-        this.isActive = false;
     }
 
     purge() {
@@ -54,7 +55,7 @@ export default class Mothership {
 
             if (this.frameTimer >= currentFrameDuration) {
                 this.frameTimer = 0;
-                this.animationFrame = (this.animationFrame + 1) % this.animationFrames; 
+                this.animationFrame = (this.animationFrame + 1) % this.animationFrames;
 
             }
         }
@@ -62,7 +63,7 @@ export default class Mothership {
             this.explosionTimer += delta;
             if (this.explosionTimer >= this.explosionDuration) {
                 this.explosionTimer = 0;
-                this.isActive = false;
+                this.remove();
             }
         }
     }

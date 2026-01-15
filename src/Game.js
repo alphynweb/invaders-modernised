@@ -315,8 +315,20 @@ export default class Game {
             this.graphicsManager.render(invader);
         });
         this.graphicsManager.render(this.mothership);
-        // this.score.render();
-        // this.lives.render();
+
+        if (this.mothership.animationType === 'exploding') {
+            const textX = this.mothership.x + (this.mothership.width / 2);
+            const textY = this.mothership.y + (this.mothership.height / 2);
+
+            this.graphicsManager.renderText(
+                this.textConfig.configs['gameText'].font,
+                this.textConfig.configs['gameText'].fillStyle,
+                textX,
+                textY,
+                this.mothership.score
+            );
+        }
+        
         this.bullets.bulletList.forEach((bullet) => {
             this.graphicsManager.render(bullet);
         });
