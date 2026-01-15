@@ -373,7 +373,29 @@ export const MOTHERSHIP = {
                         x: 332,
                         y: 0,
                         width: 68,
-                        height: 27
+                        height: 27,
+                        frameLength: 500
+                    },
+                    {
+                        x: 332,
+                        y: 27,
+                        width: 68,
+                        height: 27,
+                        frameLength: 500
+                    },
+                    {
+                        x: 332,
+                        y: 54,
+                        width: 68,
+                        height: 27,
+                        frameLength: 500
+                    },
+                    {
+                        x: 332,
+                        y: 81,
+                        width: 68,
+                        height: 27,
+                        frameLength: 500
                     }
                 ],
                 exploding: {
@@ -383,14 +405,6 @@ export const MOTHERSHIP = {
                     height: 26
                 }
             },
-            animationFrames: [
-                10,
-                10,
-                10,
-                10,
-                10,
-                10
-            ]
         }
     }
 };

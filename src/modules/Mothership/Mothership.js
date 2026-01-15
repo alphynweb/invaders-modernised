@@ -12,6 +12,8 @@ export default class Mothership {
         this.speed = config.speed;
         this.animationType = 'normal';
         this.animationFrame = 0;
+        this.animationFrames = config.spriteInfo[this.animationType].length;
+        this.frameTimer = 0;
         this.spriteInfo = config.spriteInfo;
     }
 
@@ -39,6 +41,29 @@ export default class Mothership {
     purge() {
         if (!this.isActive) {
             this.remove();
+        }
+    }
+
+    update = (delta) => {
+        if (this.animationType === 'normal') {
+            this.frameTimer += delta;
+            const currentFrameDuration = this.spriteInfo[this.animationType][this.animationFrame].frameLength;
+            if (this.frameTimer >= currentFrameDuration) {
+                console.log("Frame duration");
+                this.frameTimer = 0;
+                this.animationFrame++;
+
+                if (this.animationFrame > this.animationFrames - 1) {
+                    this.animationFrame = 0;
+                }
+            }
+        }
+        if (this.animationType === 'exploding') {
+            this.explosionTimer += delta;
+            if (this.explosionTimer >= this.explosionDuration) {
+                this.explosionTimer = 0;
+                this.isActive = false;
+            }
         }
     }
 }

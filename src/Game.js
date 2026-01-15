@@ -237,6 +237,7 @@ export default class Game {
 
         const delta = this.gameLoop.delta;
         this.invaders.update(delta);
+        this.mothership.update(delta);
     }
 
     checkCollisions = () => {
