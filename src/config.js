@@ -368,12 +368,14 @@ export const MOTHERSHIP = {
             spriteY: 0,
             noExplodingFrames: 100,
             spriteInfo: {
-                normal: {
-                    x: 332,
-                    y: 0,
-                    width: 68,
-                    height: 27
-                },
+                normal: [
+                    {
+                        x: 332,
+                        y: 0,
+                        width: 68,
+                        height: 27
+                    }
+                ],
                 exploding: {
                     x: 756,
                     y: 81,

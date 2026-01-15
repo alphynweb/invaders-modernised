@@ -11,6 +11,7 @@ export default class Mothership {
         this.isActive = true;
         this.speed = config.speed;
         this.animationType = 'normal';
+        this.animationFrame = 0;
         this.spriteInfo = config.spriteInfo;
     }
 
