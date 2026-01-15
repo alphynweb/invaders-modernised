@@ -396,6 +396,12 @@ export const MOTHERSHIP = {
                         y: 81,
                         width: 68,
                         height: 27,
+                    },
+                    {
+                        x: 332,
+                        y: 81,
+                        width: 68,
+                        height: 27,
                     }
                 ],
                 exploding: {

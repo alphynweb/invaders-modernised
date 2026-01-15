@@ -54,11 +54,8 @@ export default class Mothership {
 
             if (this.frameTimer >= currentFrameDuration) {
                 this.frameTimer = 0;
-                this.animationFrame++;
+                this.animationFrame = (this.animationFrame + 1) % this.animationFrames; 
 
-                if (this.animationFrame > this.animationFrames - 1) {
-                    this.animationFrame = 0;
-                }
             }
         }
         if (this.animationType === 'exploding') {
