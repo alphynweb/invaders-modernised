@@ -68,4 +68,25 @@ export default class GraphicsManager {
         this.ctx.fillStyle = fillStyle;
         this.ctx.fillText(text, x, y);
     }
+
+    renderSprite = (spriteInfo, x, y) => {
+        const sx = spriteInfo.x;
+        const sy = spriteInfo.y;
+        const width = spriteInfo.width;
+        const height = spriteInfo.height;
+        const dx = x;
+        const dy = y;
+
+        this.ctx.drawImage(
+            this.sprite,
+            sx,
+            sy,
+            width,
+            height,
+            dx,
+            dy,
+            width,
+            height
+        )
+    }
 }

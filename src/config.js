@@ -9,6 +9,26 @@ export const SCREEN = {
     }
 };
 
+export const LIVES = {
+    type: 'lives',
+    configs: {
+        main: {
+            x: 600,
+            y: 20,
+            lives: 5,
+            livesGap: 10, // Space between lives at top of screen
+            spriteInfo: {
+                normal: {
+                    x: 0,
+                    y: 0,
+                    width: 52,
+                    height: 32
+                }
+            }
+        }
+    }
+};
+
 export const TEXT = {
     type: 'text',
     configs: {
@@ -58,11 +78,6 @@ export const BUTTON = {
         }
     }
 }
-
-export const LIVES = {
-    lives: 5, // No of initial lives
-    indicatorGap: 10 // Space between lives at top of screen
-};
 
 export const TANK = {
     type: 'tank',

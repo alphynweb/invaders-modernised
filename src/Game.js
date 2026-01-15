@@ -111,7 +111,7 @@ export default class Game {
         this.livesLeft = this.livesConfig.lives;
 
         this.score = new Score();
-        this.lives = Lives();
+        this.lives = new Lives(this.livesConfig.configs);
 
         this.tank = new Tank(
             this.tankConfig.type,
@@ -285,7 +285,7 @@ export default class Game {
                 inputHandler.currentKeysPressed = [];
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.tank.destroy();
-                this.lives.loseLife();
+                this.lives.lose();
                 if (this.lives.currentLives === 0) {
                     this.gameStates.currentState = this.gameStates.over;
                     return;
@@ -328,7 +328,7 @@ export default class Game {
                 this.mothership.score
             );
         }
-        
+
         this.bullets.bulletList.forEach((bullet) => {
             this.graphicsManager.render(bullet);
         });
@@ -342,6 +342,27 @@ export default class Game {
             scoreTextConfig.y,
             'Score: ' + this.score.currentScore
         );
+
+        this.renderLives();
+    }
+
+    renderLives = () => {
+        const config = this.livesConfig.configs['main'];
+        let x = config.x;
+        const y = config.y;
+        const livesGap = config.livesGap;
+        const livesLeft = this.lives.livesLeft;
+        const spriteInfo = config.spriteInfo['normal'];
+        const width = spriteInfo.width;
+
+        for (let i = 0; i < livesLeft; i++) {
+            this.graphicsManager.renderSprite(
+                spriteInfo,
+                x,
+                y
+            )
+            x += livesGap + width;
+        }
     }
 
     purge = () => {
