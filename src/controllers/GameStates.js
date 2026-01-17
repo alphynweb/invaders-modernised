@@ -23,7 +23,6 @@ export default class GameStates {
     }
 
     run(currentTime) {
-        // console.log("Running game from GameStates.js");
         this.onRunGame(currentTime);
     }
 

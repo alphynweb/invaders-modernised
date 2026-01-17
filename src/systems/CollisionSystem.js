@@ -32,7 +32,6 @@ export default class CollisionSystem {
     }
 
     handleTankBulletCollisions = () => {
-        // Establish whether tank bullet is currently in play
         let tankBulletIndex;
         let collisionInfo;
 
@@ -42,9 +41,7 @@ export default class CollisionSystem {
             });
         }
 
-        // Collision detection for tank bullet
         if (tankBulletIndex > -1) {
-            // Set collisionDetector obj1 to tank bullet
             const tankBullet = this.bullets.bulletList[tankBulletIndex];
 
             // Tank bullet vs invaders
@@ -79,7 +76,6 @@ export default class CollisionSystem {
                     const topLeftX = tankBullet.x - city.x; // Bullet x
                     const topLeftY = tankBullet.y - city.y - 1; // 1 px above bullet y
                     
-                    // const width = this.tankConfig.bulletInfo.width;
                     const width = tankBullet.width;
                     
                     const height = 1;

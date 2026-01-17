@@ -1,22 +1,24 @@
 import { SCREEN } from '../../config';
 
 export default class Tank {
-    constructor(type, subType, configs, x, y, screen) {
+    constructor(type, subType, configs, screen) {
         const config = configs[subType];
         this.animationType = 'normal';
         this.type = type;
         this.subType = subType;
         this.width = config.width;
         this.height = config.height;
-        this.x = x;
-        this.y = y;
+        this.x = config.x;
+        this.y = config.y;
         this.isActive = true;
         this.speed = config.speed;
         this.spriteInfo = config.spriteInfo;
-        this.screenConfig = SCREEN;
+        this.explosionDuration = config.explosionDuration;
+        this.explosionTimer = 0;
+        this.screenConfig = screen;
     }
 
-    move(direction) {
+    move = (direction) => {
         if (direction === 'left') this.x -= this.speed;
         if (direction === 'right') this.x += this.speed;
 
@@ -24,75 +26,23 @@ export default class Tank {
         if (this.x > this.screenConfig.width - this.width) this.x = this.screenConfig.width - this.width;
     }
 
-    destroy() {
-        this.animationFrame = 1;
+    destroy = () => {
         this.animationType = 'exploding';
+        this.isActive = false;
     }
 
-    reset() {
-        // this.x = this.config.x;
-        // this.animationFrame = 0;
-        // this.animationType = null;
+    reset = () => {
+        this.animationType = 'normal';
+        this.isActive = true;
     }
 
-    // render() {
-    //     if (this.animationFrame === 0) {
-    //         this.ctx.drawImage(
-    //             this.sprite,
-    //             this.spriteInfo.x,
-    //             this.spriteInfo.y,
-    //             this.width,
-    //             this.height,
-    //             this.x,
-    //             this.y,
-    //             this.width,
-    //             this.height
-
-    //         );
-    //     } else if (this.animationType) {
-    //         switch (this.animationType) {
-
-    //             case 'destroy':
-    //                 this.ctx.drawImage(
-    //                     this.sprite,
-    //                     this.spriteInfo.explosionX,
-    //                     this.spriteInfo.explosionY,
-    //                     this.spriteInfo.explosionWidth,
-    //                     this.spriteInfo.explosionHeight,
-    //                     this.x + this.xSpriteOffset,
-    //                     this.y + this.ySpriteOffset,
-    //                     this.spriteInfo.explosionWidth,
-    //                     this.spriteInfo.explosionHeight
-
-    //                 );
-    //                 this.animationFrame++;
-    //                 if (this.animationFrame > this.destroyAnimationFrames) {
-    //                     this.animationFrame = 0;
-    //                     this.animationType = null;
-    //                 }
-    //                 break;
-    //             case 'shoot':
-    //                 this.ctx.drawImage(
-    //                     this.sprite,
-    //                     0,
-    //                     this.height,
-    //                     this.width,
-    //                     this.height,
-    //                     this.x,
-    //                     this.y,
-    //                     this.width,
-    //                     this.height
-
-    //                 );
-    //                 this.animationFrame++;
-    //                 if (this.animationFrame > this.shootAnimationFrames) {
-    //                     this.animationFrame = 0;
-    //                     this.animationType = null;
-    //                 }
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     }
-    // }
+    update = (delta) => {
+        if (this.animationType === 'exploding') {
+            this.explosionTimer += delta;
+            if (this.explosionTimer >= this.explosionDuration) {
+                this.explosionTimer = 0;
+                this.reset();
+            }
+        }
+    }
 }

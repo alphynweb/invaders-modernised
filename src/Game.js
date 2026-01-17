@@ -218,28 +218,6 @@ export default class Game {
         );
     }
 
-    update = (currentTime) => {
-        this.purge();
-        this.checkCollisions();
-        this.bullets.move();
-        this.moveInvaders(currentTime);
-        this.moveMothership(currentTime);
-
-        if (inputHandler.isKeyPressed('Space')) {
-            this.onTankBulletFired();
-        }
-        if (inputHandler.isKeyPressed('ArrowRight')) {
-            this.tank.move('right');
-        }
-        if (inputHandler.isKeyPressed('ArrowLeft')) {
-            this.tank.move('left');
-        }
-
-        const delta = this.gameLoop.delta;
-        this.invaders.update(delta);
-        this.mothership.update(delta);
-    }
-
     checkCollisions = () => {
         this.collisionSystem.checkCollisions();
         const collisions = this.collisionSystem.collisions;
@@ -397,7 +375,26 @@ export default class Game {
     }
 
     onRunGame = (currentTime) => {
-        this.update(currentTime);
+        this.purge();
+        this.checkCollisions();
+        this.bullets.move();
+        this.moveInvaders(currentTime);
+        this.moveMothership(currentTime);
+
+        if (inputHandler.isKeyPressed('Space')) {
+            this.onTankBulletFired();
+        }
+        if (inputHandler.isKeyPressed('ArrowRight')) {
+            this.tank.move('right');
+        }
+        if (inputHandler.isKeyPressed('ArrowLeft')) {
+            this.tank.move('left');
+        }
+
+        const delta = this.gameLoop.delta;
+        this.invaders.update(delta);
+        this.mothership.update(delta);
+        this.tank.update(delta);
         this.render();
     }
 
@@ -418,12 +415,21 @@ export default class Game {
     }
 
     onLoseLife = () => {
-        // Check to see if tank destroy animation has finished
-        if (!this.tank.animationType) {
+        const delta = this.gameLoop.delta;
+        this.tank.update(delta);
+        if (this.tank.animationType === 'normal') {
+            this.tank = null;
+            this.tank = new Tank(
+                this.tankConfig.type,
+                'main',
+                this.tankConfig.configs,
+                this.tankConfig.configs['main'].x,
+                this.tankConfig.configs['main'].y,
+                this.screen
+            );
+            this.collisionSystem.tank = this.tank;
             this.gameStates.currentState = this.gameStates.run;
-            this.tank.reset();
         }
-        this.graphicsManager.render(this.tank);
     }
 
     onEndGame = () => {

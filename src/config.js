@@ -88,6 +88,7 @@ export const TANK = {
             speed: 4,
             width: 52,
             height: 32,
+            explosionDuration: 2000,
             spriteInfo: {
                 normal: {
                     x: 0,
