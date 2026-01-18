@@ -2,33 +2,6 @@ import { INVADER, TANK, CITY } from '../../config';
 import Sprite from '../Sprite/Sprite';
 
 export default class City {
-    static cityCollisionMap = new Map([
-        [
-            subType => subType.startsWith('invader'),
-            (city, collisionObject, configs) => {
-                const bulletConfigs = configs.find(c => c.type === 'bullet').configs[collisionObject.subType];
-                const topLeftY = collisionObject.y - city.y + collisionObject.height - bulletConfigs.height;
-                return topLeftY;
-                debugger;
-            }
-        ],
-        [
-            subType => subType === 'tank',
-            (city, collisionObject, configs) => {
-                const tankConfigs = configs.find(c => c.type === 'tank').configs['main'];
-                const topLeftY = collisionObject.y - city.y - city.spriteInfo.damageHeight + tankConfigs.speed;
-                return topLeftY;
-                debugger;
-            }
-        ],
-        [
-            subType => subType === 'mothership',
-            (city, collisionObject, configs) => {
-                debugger;
-            }
-        ]
-    ]);
-
     constructor(canvasId, x, configs) {
         // const configs = configs;
         const config = configs.find(config => config.type === 'city').configs['main'];
