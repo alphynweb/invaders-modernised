@@ -30,16 +30,16 @@ export default class City {
     ]);
 
     constructor(canvasId, x, configs) {
-        this.configs = configs;
-        this.cityConfig = this.configs.find(config => config.type === 'city').configs['main'];
+        // const configs = configs;
+        const config = configs.find(config => config.type === 'city').configs['main'];
         this.canvasId = canvasId;
         this.x = x;
-        this.y = this.cityConfig.y;
+        this.y = config.y;
         this.ctx = document.getElementById(canvasId).getContext('2d');
         this.sprite = Sprite();
-        this.width = this.cityConfig.width;
-        this.height = this.cityConfig.height;
-        this.spriteInfo = this.cityConfig.spriteInfo;
+        this.width = config.width;
+        this.height = config.height;
+        this.spriteInfo = config.spriteInfo;
     }
 
     damage(collisionObject) { // collisionObject = Bullet tyep that collided with city
@@ -72,20 +72,5 @@ export default class City {
 
     clear() {
         this.ctx.clearRect(0, 0, this.width, this.height);
-    }
-
-    render() {
-        this.ctx.drawImage(
-            this.sprite,
-            this.spriteInfo.x,
-            this.spriteInfo.y,
-            this.width,
-            this.height,
-            0,
-            0,
-            this.width,
-            this.height
-
-        );
     }
 }

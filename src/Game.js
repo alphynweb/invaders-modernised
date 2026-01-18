@@ -23,6 +23,7 @@ import Tank from './modules/Tank/Tank';
 import Invaders from './modules/invaders/Invaders';
 import Bullets from './modules/Bullets/Bullets';
 import Cities from './modules/Cities/Cities';
+import cityCollisionMap from './modules/City/cityCollisionMap';
 import Mothership from './modules/Mothership/Mothership';
 import Score from './modules/Score/Score';
 import Lives from './modules/Lives/Lives';
@@ -39,6 +40,7 @@ import GraphicsManager from './systems/GraphicsManager';
 export default class Game {
     constructor() {
         this.cityConfig = CITY;
+        this.cityCollisionMap = cityCollisionMap;
         this.textConfig = TEXT;
         this.invaderConfig = INVADER;
         this.invadersConfig = INVADERS;
@@ -232,7 +234,30 @@ export default class Game {
                 invader.destroy();
             },
             "Tank vs City": (collision) => {
-                collision.target.damage(collision.bullet);
+                const bullet = collision.bullet;
+                const city = collision.target;
+                const spriteInfo = city.spriteInfo;
+
+                const topLeftX = bullet.x - city.x - (spriteInfo.damageWidth / 2);
+                let topLeftY;
+                const subType = bullet.subType;
+
+                const configs = [
+                    this.screenConfig,
+                    this.cityConfig,
+                    this.invaderConfig,
+                    this.tankConfig,
+                    this.bulletConfig
+                ];
+
+                for (const [matchFn, handlerFn] of this.cityCollisionMap) {
+                    if (matchFn(subType)) {
+                        topLeftY = handlerFn(city, bullet, configs);
+                        break;
+                    }
+                }
+
+                this.graphicsManager.damageCity(city, topLeftX, topLeftY)
                 this.bullets.removeBullet(collision.bulletIndex);
             },
             "Tank vs Mothership": (collision) => {
@@ -362,13 +387,18 @@ export default class Game {
     }
 
     onStartGame = async () => {
+        console.log("Starting game");
+
         this.volumeControlContainer.style.visibility = "visible";
         this.volumeControl.oninput = () => {
             this.soundManager.onSetVolume(this.volumeControl.value);
         }
 
         this.cities.build();
-        this.cities.render();
+
+        this.cities.cityList.forEach(city => {
+            this.graphicsManager.renderCity(city);
+        });
 
         this.gameStates.currentState = this.gameStates.run;
         this.gameLoop.start();

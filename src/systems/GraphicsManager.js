@@ -89,4 +89,47 @@ export default class GraphicsManager {
             height
         )
     }
+
+    renderCity = (city) => {
+        console.log(city);
+        const ctx = city.ctx;
+        const spriteInfo = city.spriteInfo;
+        const sx = spriteInfo.x;
+        const sy = spriteInfo.y;
+        const width = city.width;
+        const height = city.height;
+        const dx = 0;
+        const dy = 0;
+
+        ctx.drawImage(
+            this.sprite,
+            sx,
+            sy,
+            width,
+            height,
+            dx,
+            dy,
+            width,
+            height
+        );
+    }
+
+    damageCity = (city, topLeftX, topLeftY) => {
+        const ctx = city.ctx;
+        const spriteInfo = city.spriteInfo;
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.drawImage(
+            this.sprite,
+            spriteInfo.damageX,
+            spriteInfo.damageY,
+            spriteInfo.damageWidth,
+            spriteInfo.damageHeight,
+            topLeftX,
+            topLeftY,
+            spriteInfo.damageWidth,
+            spriteInfo.damageHeight
+
+        );
+        this.ctx.globalCompositeOperation = 'source-over'; // Change back to default for re-rendering of cities
+    }
 }
