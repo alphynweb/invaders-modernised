@@ -112,8 +112,9 @@ export default class IntroScreen {
         this.graphicsManager.render(startButton);
 
         const clickListen = (event) => {
-            const xClicked = event.clientX;
-            const yClicked = event.clientY;
+            const rect = this.screen.screen.getBoundingClientRect();
+            const xClicked = event.clientX - rect.left;
+            const yClicked = event.clientY - rect.top;
 
             console.log("Screen clicked. x", xClicked, 'y', yClicked);
 
