@@ -111,22 +111,19 @@ export default class IntroScreen {
 
         this.graphicsManager.render(startButton);
 
-        // const startButton = button(x, y, width, height, 'START', '#0f0', 'startButton', 'button');
-        // this.graphicsManager.render(startButton);
-
         const clickListen = (event) => {
             const xClicked = event.clientX;
             const yClicked = event.clientY;
 
-            if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > y) {
+            console.log("Screen clicked. x", xClicked, 'y', yClicked);
+
+            if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > yClicked) {
                 event.currentTarget.removeEventListener('click', clickListen);
                 this.startGame();
             }
         }
 
-        this.screen.screen.addEventListener('click', (event) => {
-            clickListen(event);
-        });
+        this.screen.screen.addEventListener('click', clickListen);
     }
 
     renderInstructions = () => {

@@ -271,7 +271,7 @@ export default class Game {
                 inputHandler.currentKeysPressed = [];
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.tank.destroy();
-                this.lives.lose();
+                this.lives.loseLife();
                 if (this.lives.currentLives === 0) {
                     this.gameStates.currentState = this.gameStates.over;
                     return;
@@ -280,30 +280,8 @@ export default class Game {
                 this.gameStates.currentState = this.gameStates.lose;
             },
             "Invader vs City": (collision) => {
-                const bullet = collision.bullet;
                 const city = collision.target;
-                const spriteInfo = city.spriteInfo;
-
-                const topLeftX = bullet.x - city.x - (spriteInfo.damageWidth / 2);
-                let topLeftY;
-                const subType = bullet.subType;
-
-                const configs = [
-                    this.screenConfig,
-                    this.cityConfig,
-                    this.invaderConfig,
-                    this.tankConfig,
-                    this.bulletConfig
-                ];
-
-                for (const [matchFn, handlerFn] of this.cityCollisionMap) {
-                    if (matchFn(subType)) {
-                        topLeftY = handlerFn(city, bullet, configs);
-                        break;
-                    }
-                }
-
-                this.graphicsManager.damageCity(city, topLeftX, topLeftY)
+                city.damage(collision.bullet);
                 this.bullets.removeBullet(collision.bulletIndex);
             },
             "Mothership vs Tank": (collision) => {
