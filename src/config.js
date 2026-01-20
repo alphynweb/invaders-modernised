@@ -144,7 +144,7 @@ export const INVADERS = {
             maxY: 300,
             columnWidth: 50,
             rowHeight: 50,
-            columns: 1,
+            columns: 11,
             // columns: 11,
             columnGap: 5,
             rowGap: 10,
@@ -152,10 +152,10 @@ export const INVADERS = {
             speedIncrease: 17,
             explosionFrames: 5,
             formation: [
-                // { subType: 'invader1', rowNo: 1 },
-                // { subType: 'invader1', rowNo: 2 },
-                // { subType: 'invader2', rowNo: 3 },
-                // { subType: 'invader2', rowNo: 4 },
+                { subType: 'invader1', rowNo: 1 },
+                { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader2', rowNo: 4 },
                 { subType: 'invader3', rowNo: 5 }
             ]
         }
