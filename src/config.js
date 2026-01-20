@@ -261,7 +261,7 @@ export const INVADER = {
                     },
                     {
                         x: 172,
-                        y: 0,
+                        y: 32,
                         width: 44,
                         height: 32
                     }
@@ -290,7 +290,7 @@ export const INVADER = {
                     },
                     {
                         x: 216,
-                        y: 0,
+                        y: 32,
                         width: 48,
                         height: 32
                     },
