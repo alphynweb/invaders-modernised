@@ -271,7 +271,7 @@ export default class Game {
                 inputHandler.currentKeysPressed = [];
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.tank.destroy();
-                this.lives.loseLife();
+                this.lives.lose();
                 if (this.lives.currentLives === 0) {
                     this.gameStates.currentState = this.gameStates.over;
                     return;
