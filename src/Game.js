@@ -539,7 +539,7 @@ export default class Game {
             // Create mothership bomb in bullets list if there isn't already one
             const mothershipBullets = this.bullets.bulletList.filter((bullet) => bullet.subType === 'mothership');
 
-            if (mothershipBullets.length === 0) {
+            if (mothershipBullets.length === 0 && this.mothership.animationType === 'normal') {
                 this.bullets.addBullet(
                     'bullet',
                     'mothership',
