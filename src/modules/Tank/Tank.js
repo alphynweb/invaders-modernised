@@ -8,6 +8,7 @@ export default class Tank {
         this.subType = subType;
         this.width = config.width;
         this.height = config.height;
+        this.startX = config.x;
         this.x = config.x;
         this.y = config.y;
         this.isActive = true;
@@ -34,6 +35,7 @@ export default class Tank {
     reset = () => {
         this.animationType = 'normal';
         this.isActive = true;
+        this.x = this.startX;
     }
 
     update = (delta) => {

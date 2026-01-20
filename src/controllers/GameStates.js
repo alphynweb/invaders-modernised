@@ -3,6 +3,7 @@ export default class GameStates {
         onIntro,
         onStartGame,
         onRunGame,
+        onPauseGame,
         onFinishLevel,
         onLoseLife,
         onEndGame
@@ -16,6 +17,7 @@ export default class GameStates {
         this.onIntro = onIntro;
         this.onEndGame = onEndGame;
         this.onRunGame = onRunGame;
+        this.onPauseGame = onPauseGame;
     }
 
     intro(currentTime) {
@@ -24,6 +26,10 @@ export default class GameStates {
 
     run(currentTime) {
         this.onRunGame(currentTime);
+    }
+
+    pause(currentTime) {
+        this.onPauseGame();
     }
 
     finish(currentTime) {

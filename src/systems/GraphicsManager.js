@@ -91,7 +91,6 @@ export default class GraphicsManager {
     }
 
     renderCity = (city) => {
-        console.log(city);
         const ctx = city.ctx;
         const spriteInfo = city.spriteInfo;
         const sx = spriteInfo.x;

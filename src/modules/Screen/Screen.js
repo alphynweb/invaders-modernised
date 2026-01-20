@@ -9,6 +9,7 @@ const screen = () => {
     newScreen.style.position = "absolute";
     newScreen.style.top = "0";
     newScreen.style.left = "0";
+    newScreen.style.textAlign = "center";
     
     return {
         screen: newScreen,

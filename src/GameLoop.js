@@ -6,7 +6,6 @@ export default class GameLoop {
         this.frameDuration = 1000 / this.fps;
         this.delta = 0;
 
-        // Functions passed in from main Game class
         this.onTick = onTick;
     }
 

@@ -55,6 +55,9 @@ export default class Game {
         this.livesLeft = this.livesConfig.lives;
 
         this.screen = Screen();
+        this.screen.ctx.textAlign = 'center';
+        this.screen.textBaseline = 'middle';
+
         this.screen.render();
 
 
@@ -83,6 +86,7 @@ export default class Game {
             this.onIntro,
             this.onStartGame,
             this.onRunGame,
+            this.onPauseGame,
             this.onFinishLevel,
             this.onLoseLife,
             this.onEndGame
@@ -182,6 +186,13 @@ export default class Game {
             this.invaderConfig,
             this.buttonConfig
         );
+
+        this.finishLevel = new FinishLevel(
+            this.graphicsManager,
+            this.screen,
+            this.textConfig,
+            this.currentLevel
+        )
 
         this.gameStates.currentState = this.gameStates.intro;
         this.gameStates.currentState();
@@ -450,20 +461,19 @@ export default class Game {
         this.render();
     }
 
-    onFinishLevel = () => {
-        const finishLevel = new FinishLevel(
-            this.invaderConfig,
-            this.invadersConfig,
-            this.invaders,
-            this.cities,
-            this.tank
-        );
+    onPauseGame = () => {
+        this.gameLoop.stop();
+    }
 
-        finishLevel.reset(this.currentLevel);
-        finishLevel.render();
+    onFinishLevel = () => {
+        this.finishLevel.render();
+        this.finishLevel.update(this.gameLoop.delta);
+
+        if (this.finishLevel.state === 'hide') {
+            // Start new wave
+        }
 
         this.currentLevel++;
-        this.gameStates.currentState = this.gameStates.run;
     }
 
     onLoseLife = () => {

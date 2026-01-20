@@ -1,37 +1,46 @@
 export default class FinishLevel {
-    constructor(invaderConfig, invadersConfig, invaders, cities, tank) {
-        this.invaderConfig = invaderConfig;
-        this.invadersConfig = invadersConfig;
-        this.invaders = invaders;
-        this.cities = cities;
-        this.tank = tank;
+    constructor(
+        graphicsManager,
+        screen,
+        textConfig,
+        currentLevel
+    ) {
+        this.graphicsManager = graphicsManager;
+        this.screen = screen;
+        this.ctx = screen.ctx;
+        this.textConfig = textConfig;
+        this.font = this.textConfig.configs['gameText'].font;
+        this.fillStyle = this.textConfig.configs['gameText'].fillStyle;
+        this.x = this.screen.width / 2;
+        this.textX = this.screen.width / 2;
+        this.y = this.screen.height / 2;
+        this.currentLevel = currentLevel;
+        this.timer = 0;
+        this.duration = 2000;
+        this.state = 'show';
     }
-    reset() {
-        // Implement short pause then re-setup invaders  and cities
+    render = () => {
+        this.renderMessage();
+    }
+    switchState = (state) => {
+        this.state = state;
+    }
 
-        // Implement short pause
-
-        // Setup invaders again - lower the y coord
-        const invader_group_y = this.invaderConfig.rowHeight;
-
-        let invaderMoveTime;
-
-        // If invaders are lower than a certain level, reset the invader_group_y but speed up the invaders
-        if (invader_group_y > this.invadersConfig.maxY) {
-            invader_group_y = this.invadersConfig.y;
-            invaderMoveTime = this.invadersConfig.moveTime - this.invadersConfig.speedIncrease;
-        } else {
-            invaderMoveTime = this.invadersConfig.moveTime - this.invadersConfig.speedIncrease;
+    renderMessage = () => {
+        this.graphicsManager.renderText(
+            this.font,
+            this.fillStyle,
+            this.textX,
+            this.y,
+            "Level " + this.currentLevel + "Finished"
+        )
+    }
+    update = (delta) => {
+        this.timer += delta;
+        if (this.timer >= this.duration) {
+            this.timer = 0;
+            this.state = 'hide';
+            console.log('hiding');
         }
-
-        this.invaders.build(invader_group_y);
-
-        this.invaders.direction = 'right';
-    
-        this.cities.build();
-        this.tank.reset();
-    }
-    render() {
-        this.cities.render();
     }
 }
