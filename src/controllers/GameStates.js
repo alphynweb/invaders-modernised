@@ -4,6 +4,7 @@ export default class GameStates {
         onStartGame,
         onRunGame,
         onPauseGame,
+        onStartLevel,
         onFinishLevel,
         onLoseLife,
         onEndGame
@@ -12,6 +13,7 @@ export default class GameStates {
 
         // Functions passed in from main Game class
         this.onStartGame = onStartGame;
+        this.onStartLevel = onStartLevel;
         this.onFinishLevel = onFinishLevel;
         this.onLoseLife = onLoseLife;
         this.onIntro = onIntro;
@@ -32,8 +34,12 @@ export default class GameStates {
         this.onPauseGame();
     }
 
-    finish(currentTime) {
+    finishLevel(currentTime) {
         this.onFinishLevel(currentTime);
+    }
+
+    startLevel() {
+        this.onStartLevel();
     }
 
     lose(currentTime) {

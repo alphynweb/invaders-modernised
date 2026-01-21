@@ -1,4 +1,4 @@
-export default class FinishLevel {
+export default class StartLevel {
     constructor(
         graphicsManager,
         screen,
@@ -17,7 +17,7 @@ export default class FinishLevel {
         this.currentLevel = currentLevel;
         this.timer = 0;
         this.duration = 2000;
-        this.state = 'show';
+        this.state = null;
     }
     render = () => {
         this.renderMessage();
@@ -25,14 +25,13 @@ export default class FinishLevel {
     switchState = (state) => {
         this.state = state;
     }
-
     renderMessage = () => {
         this.graphicsManager.renderText(
             this.font,
             this.fillStyle,
             this.textX,
             this.y,
-            "Level " + this.currentLevel + "Finished"
+            "Level " + this.currentLevel + "Start"
         )
     }
     update = (delta) => {
