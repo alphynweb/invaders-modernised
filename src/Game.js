@@ -204,7 +204,9 @@ export default class Game {
             this.screen
         );
 
-        this.invaders.initializeLevel();
+        this.invaders.initializeLevel(
+            this.invadersDefinition.getLevelConfig()
+        );
 
         // this.invaders.setLevelConfig(
         //     this.invadersDefinition.getLevelConfig()
