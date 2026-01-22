@@ -17,6 +17,11 @@ export default class Invaders {
         this.invaderConfigs = invaderConfigs;
     }
 
+    initializeLevel() {
+        this.setLevelConfig(levelConfig);
+        this.build();
+    }
+
     setLevelConfig(levelConfig) {
         this.levelName = levelConfig.levelName;
         this.formation = levelConfig.formation;

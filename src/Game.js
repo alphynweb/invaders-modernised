@@ -204,9 +204,11 @@ export default class Game {
             this.screen
         );
 
-        this.invaders.setLevelConfig(
-            this.invadersDefinition.getLevelConfig()
-        );
+        this.invaders.initializeLevel();
+
+        // this.invaders.setLevelConfig(
+        //     this.invadersDefinition.getLevelConfig()
+        // );
 
         this.bullets = new Bullets();
 
@@ -233,7 +235,7 @@ export default class Game {
         this.now = 0;
         this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime - this.invadersConfig.configs['wave1'].speedIncrease;
 
-        this.invaders.build(this.invaderGroupY);
+        // this.invaders.build(this.invaderGroupY);
 
         // this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
         this.mothershipNewTime = 0;
