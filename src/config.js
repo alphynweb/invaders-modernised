@@ -140,6 +140,7 @@ export const INVADERS = {
         wave1: {
             moveSpeed: 20, // Distance invaders move horizontally
             shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
+            bullets: 1, // Number of bullets that invaders produce at any one time
             y: 100,
             maxY: 300,
             columnWidth: 50,
@@ -153,6 +154,51 @@ export const INVADERS = {
             formation: [
                 { subType: 'invader1', rowNo: 1 },
                 { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader2', rowNo: 4 },
+                { subType: 'invader3', rowNo: 5 }
+            ]
+        },
+        wave2: {
+            moveSpeed: 20, // Distance invaders move horizontally
+            shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
+            bullets: 2,
+            y: 100,
+            maxY: 300,
+            columnWidth: 50,
+            rowHeight: 50,
+            columns: 11,
+            columnGap: 5,
+            rowGap: 10,
+            moveTime: 1000, // Time between movement
+            speedIncrease: 17,
+            explosionFrames: 5,
+            formation: [
+                { subType: 'invader1', rowNo: 1 },
+                { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader2', rowNo: 4 },
+                { subType: 'invader3', rowNo: 5 }
+            ]
+        },
+        wave3: {
+            moveSpeed: 20, // Distance invaders move horizontally
+            shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
+            bullets: 3,
+            y: 100,
+            maxY: 300,
+            columnWidth: 50,
+            rowHeight: 50,
+            columns: 3,
+            // columns: 11,
+            columnGap: 5,
+            rowGap: 10,
+            moveTime: 1000, // Time between movement
+            speedIncrease: 17,
+            explosionFrames: 5,
+            formation: [
+                // { subType: 'invader1', rowNo: 1 },
+                // { subType: 'invader1', rowNo: 2 },
                 { subType: 'invader2', rowNo: 3 },
                 { subType: 'invader2', rowNo: 4 },
                 { subType: 'invader3', rowNo: 5 }

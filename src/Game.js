@@ -16,6 +16,9 @@ import {
 import collisionDetector from './utils/CollisionDetector';
 import inputHandler from './utils/inputHandler';
 
+// Definitions
+import InvadersDefinition from './definitions/InvadersDefinition';
+
 // Modules
 import Screen from './modules/Screen/Screen';
 import Tank from './modules/Tank/Tank';
@@ -51,7 +54,6 @@ export default class Game {
         this.buttonConfig = BUTTON;
         this.livesConfig = LIVES;
         this.screenConfig = SCREEN;
-
 
         this.livesLeft = this.livesConfig.lives;
 
@@ -121,6 +123,13 @@ export default class Game {
         this.score = new Score();
         this.lives = new Lives(this.livesConfig.configs);
 
+        this.invaders = new Invaders(
+            this.invadersConfig,
+            this.invaderConfig,
+        );
+
+        this.setupStates();
+        this.setupDefinitions();
         this.setupEntities();
 
         this.collisionSystem = new CollisionSystem(
@@ -152,8 +161,6 @@ export default class Game {
             this.currentLevel
         );
 
-        this.setupStates();
-
         inputHandler.init();
 
         this.gameStates.currentState = this.gameStates.intro;
@@ -179,6 +186,14 @@ export default class Game {
         );
     };
 
+    setupDefinitions = () => {
+        this.invadersDefinition = new InvadersDefinition();
+        this.invadersDefinition.setLevelConfig(
+            this.invadersConfig,
+            this.currentLevel
+        );
+    }
+
     setupEntities = () => {
         this.tank = new Tank(
             this.tankConfig.type,
@@ -189,11 +204,8 @@ export default class Game {
             this.screen
         );
 
-        this.invaders = new Invaders(
-            this.invaderGroupY,
-            this.invadersConfig,
-            this.invaderConfig
-
+        this.invaders.setLevelConfig(
+            this.invadersDefinition.getLevelConfig()
         );
 
         this.bullets = new Bullets();
@@ -523,6 +535,7 @@ export default class Game {
             this.gameStates.currentState = this.gameStates.run;
         }
 
+        this.setupDefinitions();
         console.log("Starting new level");
 
     }
@@ -561,7 +574,7 @@ export default class Game {
         let bottomInv;
 
         // If it's less than 2(? Arbitrary) for example, then create more randomly so there are always 2
-        let noBulletsToCreate = 2 - invaderBullets.length;
+        let noBulletsToCreate = this.invadersDefinition.bullets - invaderBullets.length;
 
         for (let i = 0; i < noBulletsToCreate; i++) {
             // Choose random invader - the bottom one of whatever column
