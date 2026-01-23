@@ -27,8 +27,10 @@ export default class Tank {
         if (direction === 'left') this.x -= this.speed;
         if (direction === 'right') this.x += this.speed;
 
-        if (this.x < 0) this.x = 0;
-        if (this.x > this.screenConfig.width - this.width) this.x = this.screenConfig.width - this.width;
+        this.x = Math.max(
+            0,
+            Math.min(this.x, this.screenConfig.width - this.spriteInfo[this.animationType].width)
+        );
     }
 
     destroy = () => {
