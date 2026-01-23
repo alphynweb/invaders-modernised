@@ -32,7 +32,7 @@ export default class FinishLevel {
             this.fillStyle,
             this.textX,
             this.y,
-            "Level " + this.currentLevel + "Finished"
+            "Level " + this.currentLevel + " Finished"
         )
     }
     update = (delta) => {

@@ -65,6 +65,7 @@ export default class Game {
         this.screen.render();
 
         this.lives = null;
+        this.livesLeft = this.livesConfig.lives;
         this.tank = null;
         this.invaders = null;
         this.bullets = null;
@@ -95,10 +96,6 @@ export default class Game {
             this.onEndGame
         );
 
-        this.gameOver = new GameOver(
-            this.gameTextConfig,
-            this.screen
-        );
 
 
         this.volumeControlContainer = document.getElementById('volume');
@@ -116,9 +113,18 @@ export default class Game {
 
         this.soundManager.mute();
 
-        this.invaderGroupY = this.invadersConfig.configs['wave1'].y;
-        this.livesLeft = this.livesConfig.lives;
+        this.setupStates();
+        this.setupInstances();
+        this.setupDefinitions();
+        this.setupEntities();
 
+        inputHandler.init();
+
+        this.gameStates.currentState = this.gameStates.intro;
+        this.gameStates.currentState();
+    }
+
+    setupInstances = () => {
         this.score = new Score();
         this.lives = new Lives(this.livesConfig.configs);
 
@@ -154,10 +160,6 @@ export default class Game {
             ]
         );
 
-        this.setupStates();
-        this.setupDefinitions();
-        this.setupEntities();
-
         this.collisionSystem = new CollisionSystem(
             this.collisionDetector,
             this.tankConfig,
@@ -169,6 +171,11 @@ export default class Game {
             this.bullets,
             this.cities
         );
+    }
+
+    setupStates = () => {
+        this.startLevel = null;
+        this.finishLevel = null;
 
         this.introScreen = new IntroScreen(
             this.graphicsManager,
@@ -187,29 +194,18 @@ export default class Game {
             this.currentLevel
         );
 
-        inputHandler.init();
-
-        this.gameStates.currentState = this.gameStates.intro;
-        this.gameStates.currentState();
-    }
-
-    setupStates = () => {
-        this.startLevel = null;
-        this.finishLevel = null;
-
-        this.startLevel = new StartLevel(
-            this.graphicsManager,
-            this.screen,
-            this.textConfig,
-            this.currentLevel
-        );
-
         this.finishLevel = new FinishLevel(
             this.graphicsManager,
             this.screen,
             this.textConfig,
             this.currentLevel
         );
+
+        this.gameOver = new GameOver(
+            this.gameTextConfig,
+            this.screen
+        );
+
     };
 
     setupDefinitions = () => {

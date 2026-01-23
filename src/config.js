@@ -33,7 +33,7 @@ export const TEXT = {
     type: 'text',
     configs: {
         gameText: {
-            y: 40, // Height at which lives and score etc are rendered
+            y: 40, // Height at which lives and score etc are ren
             font: 'bold 20px arial',
             arrowFont: 'bold 40px arial',
             fillStyle: '#fff'

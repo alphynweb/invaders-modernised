@@ -31,7 +31,7 @@ export default class StartLevel {
             this.fillStyle,
             this.textX,
             this.y,
-            "Level " + this.currentLevel + "Start"
+            "Level " + this.currentLevel + " Start"
         )
     }
     update = (delta) => {
