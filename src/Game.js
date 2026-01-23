@@ -125,8 +125,6 @@ export default class Game {
             this.tankConfig.type,
             'main',
             this.tankConfig.configs,
-            this.tankConfig.configs['main'].x,
-            this.tankConfig.configs['main'].y,
             this.screen
         );
 
@@ -541,8 +539,6 @@ export default class Game {
                 this.tankConfig.type,
                 'main',
                 this.tankConfig.configs,
-                this.tankConfig.configs['main'].x,
-                this.tankConfig.configs['main'].y,
                 this.screen
             );
             this.collisionSystem.tank = this.tank;
