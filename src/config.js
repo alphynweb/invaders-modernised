@@ -153,17 +153,17 @@ export const INVADERS = {
             explosionFrames: 5,
             formation: [
                 { subType: 'invader1', rowNo: 1 },
-                // { subType: 'invader1', rowNo: 2 },
-                // { subType: 'invader2', rowNo: 3 },
-                // { subType: 'invader2', rowNo: 4 },
-                // { subType: 'invader3', rowNo: 5 }
+                { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader2', rowNo: 4 },
+                { subType: 'invader3', rowNo: 5 }
             ]
         },
         wave2: {
             moveSpeed: 20, // Distance invaders move horizontally
             shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
             bullets: 2,
-            y: 100,
+            y: 150,
             maxY: 300,
             columnWidth: 50,
             rowHeight: 50,
@@ -175,17 +175,17 @@ export const INVADERS = {
             explosionFrames: 5,
             formation: [
                 { subType: 'invader1', rowNo: 1 },
-                // { subType: 'invader1', rowNo: 2 },
-                // { subType: 'invader2', rowNo: 3 },
-                // { subType: 'invader2', rowNo: 4 },
-                // { subType: 'invader3', rowNo: 5 }
+                { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader2', rowNo: 4 },
+                { subType: 'invader3', rowNo: 5 }
             ]
         },
         wave3: {
             moveSpeed: 20, // Distance invaders move horizontally
             shiftDownSpeed: 30, // Distance invaders shift down by when they reach the edge of the screen
             bullets: 3,
-            y: 100,
+            y: 200,
             maxY: 300,
             columnWidth: 50,
             rowHeight: 50,
@@ -197,11 +197,11 @@ export const INVADERS = {
             speedIncrease: 17,
             explosionFrames: 5,
             formation: [
-                // { subType: 'invader1', rowNo: 1 },
-                // { subType: 'invader1', rowNo: 2 },
-                // { subType: 'invader2', rowNo: 3 },
+                { subType: 'invader1', rowNo: 1 },
+                { subType: 'invader1', rowNo: 2 },
+                { subType: 'invader2', rowNo: 3 },
                 { subType: 'invader2', rowNo: 4 },
-                // { subType: 'invader3', rowNo: 5 }
+                { subType: 'invader3', rowNo: 5 }
             ]
         }
     }
