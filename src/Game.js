@@ -63,8 +63,6 @@ export default class Game {
 
         this.screen.render();
 
-
-        // this.score = 0;
         this.lives = null;
         this.tank = null;
         this.invaders = null;
@@ -123,9 +121,38 @@ export default class Game {
         this.score = new Score();
         this.lives = new Lives(this.livesConfig.configs);
 
+        this.tank = new Tank(
+            this.tankConfig.type,
+            'main',
+            this.tankConfig.configs,
+            this.tankConfig.configs['main'].x,
+            this.tankConfig.configs['main'].y,
+            this.screen
+        );
+
         this.invaders = new Invaders(
             this.invadersConfig,
             this.invaderConfig,
+        );
+
+        this.mothership = new Mothership(
+            this.mothershipConfig.type,
+            'main',
+            this.mothershipConfig.configs,
+            this.mothershipConfig.configs['main'].x,
+            this.mothershipConfig.configs['main'].y
+        );
+
+        this.bullets = new Bullets();
+
+        this.cities = new Cities(
+            [
+                this.screenConfig,
+                this.cityConfig,
+                this.invaderConfig,
+                this.tankConfig,
+                this.bulletConfig
+            ]
         );
 
         this.setupStates();
@@ -195,51 +222,20 @@ export default class Game {
     }
 
     setupEntities = () => {
-        this.tank = new Tank(
-            this.tankConfig.type,
-            'main',
-            this.tankConfig.configs,
-            this.tankConfig.configs['main'].x,
-            this.tankConfig.configs['main'].y,
-            this.screen
-        );
+        this.tank.initializeLevel();
 
         this.invaders.initializeLevel(
             this.invadersDefinition.getLevelConfig()
         );
 
-        // this.invaders.setLevelConfig(
-        //     this.invadersDefinition.getLevelConfig()
-        // );
+        this.mothership.initializeLevel();
 
-        this.bullets = new Bullets();
+        this.cities.initializeLevel();
 
-        this.cities = new Cities(
-            [
-                this.screenConfig,
-                this.cityConfig,
-                this.invaderConfig,
-                this.tankConfig,
-                this.bulletConfig
-            ]
-        );
-
-        this.cities.build();
-
-        this.mothership = new Mothership(
-            this.mothershipConfig.type,
-            'main',
-            this.mothershipConfig.configs,
-            this.mothershipConfig.configs['main'].x,
-            this.mothershipConfig.configs['main'].y
-        );
+        this.bullets.initializeLevel();
 
         this.now = 0;
         this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime - this.invadersConfig.configs['wave1'].speedIncrease;
-
-        // this.invaders.build(this.invaderGroupY);
-
-        // this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000); // TODO - Move to Mothership Class
         this.mothershipNewTime = 0;
     }
 
@@ -472,8 +468,6 @@ export default class Game {
             this.soundManager.onSetVolume(this.volumeControl.value);
         }
 
-        this.cities.build();
-
         this.cities.cityList.forEach(city => {
             this.graphicsManager.renderCity(city);
         });
@@ -520,8 +514,6 @@ export default class Game {
             this.startLevel.state = 'show';
             this.gameStates.currentState = this.gameStates.startLevel;
         }
-
-        console.log("Starting new level");
     }
 
     onStartNewLevel = () => {
@@ -530,18 +522,14 @@ export default class Game {
         this.startLevel.update(this.gameLoop.delta);
         if (!this.startLevel.state) {
             this.setupEntities();
-            this.collisionSystem.tank = this.tank;
-            this.collisionSystem.mothership = this.mothership;
-            this.collisionSystem.invaders = this.invaders;
-            this.collisionSystem.bullets = this.bullets;
-            this.collisionSystem.cities = this.cities;
             this.setupStates();
+            this.cities.cityList.forEach(city => {
+                this.graphicsManager.renderCity(city);
+            });
             this.gameStates.currentState = this.gameStates.run;
         }
 
         this.setupDefinitions();
-        console.log("Starting new level");
-
     }
 
     onLoseLife = () => {

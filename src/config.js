@@ -145,7 +145,7 @@ export const INVADERS = {
             maxY: 300,
             columnWidth: 50,
             rowHeight: 50,
-            columns: 11,
+            columns: 1,
             columnGap: 5,
             rowGap: 10,
             moveTime: 1000, // Time between movement
@@ -153,10 +153,10 @@ export const INVADERS = {
             explosionFrames: 5,
             formation: [
                 { subType: 'invader1', rowNo: 1 },
-                { subType: 'invader1', rowNo: 2 },
-                { subType: 'invader2', rowNo: 3 },
-                { subType: 'invader2', rowNo: 4 },
-                { subType: 'invader3', rowNo: 5 }
+                // { subType: 'invader1', rowNo: 2 },
+                // { subType: 'invader2', rowNo: 3 },
+                // { subType: 'invader2', rowNo: 4 },
+                // { subType: 'invader3', rowNo: 5 }
             ]
         },
         wave2: {
@@ -206,57 +206,6 @@ export const INVADERS = {
         }
     }
 };
-
-// export const INVADER1 = {
-//     type: 'invader',
-//     configs: {
-//         subType: 'invader1',
-//         width: 32,
-//         height: 32,
-//         score: 50,
-//         animationType: 'normal',
-//         spriteInfo: {
-//             normal: {
-//                 x: 140,
-//                 y: 0,
-//                 width: 32,
-//                 height: 32
-//             },
-//             exploding: {
-//                 x: 756,
-//                 y: 0,
-//                 width: 44,
-//                 height: 26
-//             }
-//         }
-//     }
-// }
-
-// export const INVADER2 = {
-
-// }
-
-// export const INVADER3 = {
-//     type: 'invader3',
-//     width: 48,
-//     height: 32,
-//     score: 50,
-//     animationType: 'normal',
-//     spriteInfo: {
-//         normal: {
-//             x: 216,
-//             y: 0,
-//             width: 48,
-//             height: 32
-//         },
-//         exploding: {
-//             x: 756,
-//             y: 0,
-//             width: 44,
-//             height: 26
-//         }
-//     }
-// }
 
 export const INVADER = {
     type: 'invader',
@@ -351,76 +300,6 @@ export const INVADER = {
         }
     }
 }
-
-
-
-// export const INVADER = [
-//     {
-//         type: 'invader1',
-//         width: 48,
-//         height: 32,
-//         score: 50,
-//         rows: [1, 2],
-//         spriteInfo: {
-//             normal: {
-//                 x: 140,
-//                 y: 0,
-//                 width: 32,
-//                 height: 32
-//             },
-//             exploding: {
-//                 x: 756,
-//                 y: 0,
-//                 width: 44,
-//                 height: 26
-//             }
-//         }
-//     },
-//     {
-//         type: 'invader2',
-//         width: 44,
-//         height: 32,
-//         spriteX: 172,
-//         spriteY: 0,
-//         spriteExplosionX: 756,
-//         spriteExplosionY: 27,
-//         spriteExplosionWidth: 44,
-//         spriteExplosionHeight: 26,
-//         noAnimationFrames: 2,
-//         explosionFrames: 5,
-//         score: 100,
-//         rows: [3, 4],
-//         bulletInfo: {
-//             width: 4,
-//             height: 10,
-//             speed: 6,
-//             spriteX: 440,
-//             spriteY: 0
-//         }
-//     },
-//     {
-//         type: 'invader3',
-//         width: 48,
-//         height: 32,
-//         spriteX: 216,
-//         spriteY: 0,
-//         spriteExplosionX: 756,
-//         spriteExplosionY: 54,
-//         spriteExplosionWidth: 44,
-//         spriteExplosionHeight: 26,
-//         noAnimationFrames: 2,
-//         explosionFrames: 5,
-//         score: 200,
-//         rows: [5],
-//         bulletInfo: {
-//             width: 4,
-//             height: 10,
-//             speed: 4,
-//             spriteX: 460,
-//             spriteY: 0
-//         }
-//     }
-// ];
 
 export const MOTHERSHIP = {
     type: 'mothership',
@@ -599,85 +478,3 @@ export const BULLET = {
         }
     }
 };
-
-
-
-// export const TANK_BULLET = {
-//     type: 'tank_bullet',
-//     width: 6,
-//     height: 23,
-//     speed: 10,
-//     direction: 'up',
-//     spriteInfo: {
-//         normal: {
-//             x: 404,
-//             y: 0,
-//             width: 6,
-//             height: 23,
-//         }
-//     }
-// };
-
-// export const MOTHERSHIP_BULLET = {
-//     type: 'mothership_bullet',
-//     width: 12,
-//     height: 26,
-//     speed: 5,
-//     direction: 'down',
-//     spriteInfo: {
-//         normal: {
-//             x: 517,
-//             y: 0,
-//             width: 12,
-//             height: 26
-//         }
-//     }
-// }
-
-// export const INVADER1_BULLET = {
-//     type: 'invader1_bullet',
-//     width: 4,
-//     height: 10,
-//     speed: 4,
-//     direction: 'down',
-//     spriteInfo: {
-//         normal: {
-//             x: 420,
-//             y: 0,
-//             width: 4,
-//             height: 10
-//         }
-//     }
-// }
-
-// export const INVADER2_BULLET = {
-//     type: 'invader2_bullet',
-//     width: 4,
-//     height: 10,
-//     speed: 4,
-//     direction: 'down',
-//     spriteInfo: {
-//         normal: {
-//             x: 440,
-//             y: 0,
-//             width: 4,
-//             height: 10
-//         }
-//     }
-// }
-
-// export const INVADER3_BULLET = {
-//     type: 'invader3_bullet',
-//     width: 4,
-//     height: 10,
-//     speed: 4,
-//     direction: 'down',
-//     spriteInfo: {
-//         normal: {
-//             x: 460,
-//             y: 0,
-//             width: 4,
-//             height: 10
-//         }
-//     }
-// }

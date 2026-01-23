@@ -19,6 +19,10 @@ export default class Tank {
         this.screenConfig = screen;
     }
 
+    initializeLevel = () => {
+        this.reset();
+    }
+
     move = (direction) => {
         if (direction === 'left') this.x -= this.speed;
         if (direction === 'right') this.x += this.speed;

@@ -7,18 +7,11 @@ export default class Bullets {
         this.bulletList = [];
     }
 
+    initializeLevel = () => {
+        this.bulletList = [];
+    }
+
     addBullet(type, subType, configs, x, y) {
-        const config = configs[subType];
-        const direction = config.direction;
-
-        const animationType = 'normal';
-
-        const width = config.spriteInfo[animationType].width;
-        const height = config.spriteInfo[animationType].height;
-        const speed = config.speed;
-        const spriteX = config.spriteInfo[animationType].x;
-        const spriteY = config.spriteInfo[animationType].y;
-
         const newBullet = new Bullet(
             type,
             subType,

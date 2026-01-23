@@ -20,6 +20,10 @@ export default class Mothership {
         this.explosionTimer = 0;
     }
 
+    initializeLevel() {
+        this.reset();
+    }
+
     move() {
         if (this.animationType === 'exploding') return;
         this.x += this.speed;

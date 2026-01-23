@@ -15,6 +15,15 @@ export default class Cities {
         this.gameArea = document.querySelector('#gameArea');
     }
 
+    initializeLevel = () => {
+        this.cityList.forEach(city => {
+            const canvas = document.getElementById(city.canvasId);
+            if (canvas) canvas.remove();
+        });
+        this.cityList = [];
+        this.build();
+    }
+
     build() {
         for (let i = 0; i < this.noOfCities; i++) {
 
@@ -39,6 +48,7 @@ export default class Cities {
 
             this.cityList.push(newCity);
         }
+        console.log(this.cityList);
     }
 
     clear() {
