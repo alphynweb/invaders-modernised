@@ -56,6 +56,7 @@ export default class Game {
         this.screenConfig = SCREEN;
 
         this.livesLeft = this.livesConfig.lives;
+        this.maxLevel = Object.keys(this.invadersConfig.configs).length;
 
         this.screen = Screen();
         this.screen.ctx.textAlign = 'center';
@@ -212,10 +213,12 @@ export default class Game {
     };
 
     setupDefinitions = () => {
+        const currentLevel = Math.min(this.currentLevel, this.maxLevel);
+        const configs = this.invadersConfig;
         this.invadersDefinition = new InvadersDefinition();
         this.invadersDefinition.setLevelConfig(
-            this.invadersConfig,
-            this.currentLevel
+            configs,
+            currentLevel,
         );
     }
 
@@ -507,6 +510,7 @@ export default class Game {
         this.finishLevel.render();
 
         if (!this.finishLevel.state) {
+            const noOfLevels = Object.keys(this.invadersConfig.configs).length;
             this.currentLevel++;
             this.setupStates();
             this.startLevel.state = 'show';
