@@ -18,12 +18,15 @@ export default class IntroScreen {
         this.invaderConfig = invaderConfig;
         this.buttonConfig = buttonConfig;
         this.screen = screen;
+        this.screenCenter = screen.width / 2;
         this.ctx = screen.ctx;
         this.font = this.textConfig.configs['gameText'].font;
         this.arrowFont = this.textConfig.configs['gameText'].arrowFont;
         this.fillStyle = this.textConfig.configs['gameText'].fillStyle;
-        this.x = 300;
-        this.textX = 600;
+        // this.x = 300;
+        // this.textX = 600;
+        this.lhVertical = this.screen.width / 2 - (this.screen.width / 4);
+        this.rhVertical = this.screen.width / 2 + (this.screen.width / 4);
         this.verticalSpacing = 60;
         this.y = this.verticalSpacing;
         this.currentYPost = 0;
@@ -41,13 +44,19 @@ export default class IntroScreen {
     renderInvadersInfo = () => {
         let index = 1;
         for (const [subType, config] of Object.entries(this.invaderConfig.configs)) {
+            const width = config.width;
+
+            const type = this.invaderConfig.type;
+            const configs = this.invaderConfig.configs;
+            const x = this.lhVertical - (width / 2);
+            const y = this.y;
 
             const invader = new Invader(
-                this.invaderConfig.type,
+                type,
                 subType,
-                this.invaderConfig.configs,
-                this.x,
-                this.y
+                configs,
+                x,
+                y
             )
 
             this.graphicsManager.render(invader);
@@ -55,7 +64,7 @@ export default class IntroScreen {
             this.graphicsManager.renderText(
                 this.font,
                 this.fillStyle,
-                this.textX,
+                this.rhVertical,
                 this.y + (invader.height / 2),
                 "Score " + invader.score
             );
@@ -68,14 +77,18 @@ export default class IntroScreen {
     renderMothershipInfo = () => {
         let index = 1;
         for (const [subType, config] of Object.entries(this.mothershipConfig.configs)) {
-            const y = index * this.verticalSpacing;
+            const width = config.width;
+            const type = this.mothershipConfig.type;
+            const configs = this.mothershipConfig.configs;
+            const x = this.lhVertical - (width / 2);
+            const y = this.y;
 
             const mothership = new Mothership(
-                this.mothershipConfig.type,
+                type,
                 subType,
-                this.mothershipConfig.configs,
-                this.x,
-                this.y
+                configs,
+                x,
+                y
             )
 
             this.graphicsManager.render(mothership);
@@ -83,23 +96,24 @@ export default class IntroScreen {
             this.graphicsManager.renderText(
                 this.font,
                 this.fillStyle,
-                this.textX,
+                this.rhVertical,
                 this.y + (mothership.height / 2),
                 "Score ???"
             )
 
             index++;
+            this.y += this.verticalSpacing;
         }
     }
 
     renderStartButton = () => {
-        const x = 420;
-        const y = 400;
         const subType = 'startButton';
         const animationType = 'normal';
         const startButtonConfigs = this.buttonConfig.configs[subType].spriteInfo[animationType];
         const width = startButtonConfigs.width;
         const height = startButtonConfigs.height;
+        const x = this.screenCenter - (width / 2);
+        const y = 400;
 
         const startButton = new Button(
             this.buttonConfig.type,
@@ -116,8 +130,6 @@ export default class IntroScreen {
             const xClicked = event.clientX - rect.left;
             const yClicked = event.clientY - rect.top;
 
-            console.log("Screen clicked. x", xClicked, 'y', yClicked);
-
             if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > yClicked) {
                 event.currentTarget.removeEventListener('click', clickListen);
                 this.startGame();
@@ -133,7 +145,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.arrowFont,
             this.fillStyle,
-            this.x,
+            this.lhVertical,
             y,
             String.fromCharCode('8592')
         );
@@ -141,7 +153,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.font,
             this.fillStyle,
-            this.textX,
+            this.rhVertical,
             y,
             'Move Tank Left'
         );
@@ -151,7 +163,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.arrowFont,
             this.fillStyle,
-            this.x,
+            this.lhVertical,
             y,
             String.fromCharCode('8594')
         );
@@ -159,7 +171,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.font,
             this.fillStyle,
-            this.textX,
+            this.rhVertical,
             y,
             'Move Tank Right'
         );
@@ -169,7 +181,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.font,
             this.fillStyle,
-            this.x,
+            this.lhVertical,
             y,
             'Space Bar'
         );
@@ -177,7 +189,7 @@ export default class IntroScreen {
         this.graphicsManager.renderText(
             this.font,
             this.fillStyle,
-            this.textX,
+            this.rhVertical,
             y,
             'Fire'
         );
