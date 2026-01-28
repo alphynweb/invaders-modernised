@@ -145,7 +145,7 @@ export const INVADERS = {
             maxY: 300,
             columnWidth: 50,
             rowHeight: 50,
-            columns: 1,
+            columns: 11,
             columnGap: 5,
             rowGap: 10,
             moveTime: 1000, // Time between movement

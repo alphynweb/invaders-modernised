@@ -2,16 +2,16 @@ const cityCollisionMap = new Map([
     [
         subType => subType.startsWith('invader'),
         (city, collisionObject, configs) => {
-            const bulletConfigs = configs.find(c => c.type === 'bullet').configs[collisionObject.subType];
-            const topLeftY = collisionObject.y - city.y + collisionObject.height - bulletConfigs.height;
+            const bulletConfig = configs.find(c => c.type === 'bullet').configs[collisionObject.subType];
+            const topLeftY = collisionObject.y - city.y + collisionObject.height - bulletConfig.height;
             return topLeftY;
         }
     ],
     [
         subType => subType === 'tank',
         (city, collisionObject, configs) => {
-            const tankConfigs = configs.find(c => c.type === 'tank').configs['main'];
-            const topLeftY = collisionObject.y - city.y - city.spriteInfo.damageHeight + tankConfigs.speed;
+            const bulletConfig = configs.find(c => c.type === 'bullet').configs['tank'];
+            const topLeftY = collisionObject.y - city.y - city.spriteInfo.damageHeight + bulletConfig.speed;
             return topLeftY;
         }
     ],
