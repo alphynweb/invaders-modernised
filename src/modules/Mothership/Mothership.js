@@ -12,7 +12,7 @@ export default class Mothership {
         this.speed = config.speed;
         this.animationType = 'normal';
         this.animationFrame = 0;
-        this.animationFrames = config.spriteInfo[this.animationType].length;
+        this.animationFrames = config.spriteInfo[this.animationType].length - 1;
         this.frameTimer = 0;
         this.frameLengths = config.frameLengths;
         this.spriteInfo = config.spriteInfo;
@@ -60,7 +60,6 @@ export default class Mothership {
             if (this.frameTimer >= currentFrameDuration) {
                 this.frameTimer = 0;
                 this.animationFrame = (this.animationFrame + 1) % this.animationFrames;
-
             }
         }
         if (this.animationType === 'exploding') {

@@ -64,6 +64,7 @@ export default class GraphicsManager {
     }
 
     renderText = (font, fillStyle, x, y, text) => {
+        this.ctx.textBaseline = 'middle';
         this.ctx.font = font;
         this.ctx.fillStyle = fillStyle;
         this.ctx.fillText(text, x, y);

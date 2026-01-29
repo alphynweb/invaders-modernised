@@ -335,7 +335,6 @@ export const MOTHERSHIP = {
                         y: 54,
                         width: 68,
                         height: 27,
-                        frameLength: 2000
                     },
                     {
                         x: 332,

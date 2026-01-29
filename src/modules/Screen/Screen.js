@@ -10,6 +10,8 @@ const screen = () => {
     newScreen.style.top = "0";
     newScreen.style.left = "0";
     newScreen.style.textAlign = "center";
+
+    const dpr = window.devicePixelRatio || 1;
     
     return {
         screen: newScreen,

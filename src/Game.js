@@ -121,7 +121,8 @@ export default class Game {
         inputHandler.init();
 
         this.gameStates.currentState = this.gameStates.intro;
-        this.gameStates.currentState();
+        // this.gameStates.currentState();
+        this.gameLoop.start();
     }
 
     setupInstances = () => {
@@ -453,13 +454,13 @@ export default class Game {
     }
 
     onIntro = () => {
-        this.introScreen.render();
+        this.screen.clear();
+        const delta = this.gameLoop.delta;
+        this.introScreen.update(delta);
         this.startButton = document.getElementById('startButton');
     }
 
     onStartGame = async () => {
-        console.log("Starting game");
-
         this.volumeControlContainer.style.visibility = "visible";
         this.volumeControl.oninput = () => {
             this.soundManager.onSetVolume(this.volumeControl.value);

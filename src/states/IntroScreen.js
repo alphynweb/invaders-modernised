@@ -23,33 +23,26 @@ export default class IntroScreen {
         this.font = this.textConfig.configs['gameText'].font;
         this.arrowFont = this.textConfig.configs['gameText'].arrowFont;
         this.fillStyle = this.textConfig.configs['gameText'].fillStyle;
-        // this.x = 300;
-        // this.textX = 600;
-        this.lhVertical = this.screen.width / 2 - (this.screen.width / 4);
-        this.rhVertical = this.screen.width / 2 + (this.screen.width / 4);
+        this.lhVertical = Math.floor(this.screen.width / 2 - (this.screen.width / 5));
+        this.rhVertical = Math.floor(this.screen.width / 2 + (this.screen.width / 5));
         this.verticalSpacing = 60;
         this.y = this.verticalSpacing;
         this.currentYPost = 0;
 
         this.startGame = startGame;
+        this.init();
     }
 
-    render = () => {
-        this.renderInvadersInfo();
-        this.renderMothershipInfo();
-        this.renderStartButton();
-        this.renderInstructions();
-    }
-
-    renderInvadersInfo = () => {
+    init = () => {
+        this.invaders = [];
         let index = 1;
         for (const [subType, config] of Object.entries(this.invaderConfig.configs)) {
             const width = config.width;
 
             const type = this.invaderConfig.type;
             const configs = this.invaderConfig.configs;
-            const x = this.lhVertical - (width / 2);
-            const y = this.y;
+            let x = this.lhVertical - (width / 2);
+            let y = this.verticalSpacing * index;
 
             const invader = new Invader(
                 type,
@@ -59,29 +52,21 @@ export default class IntroScreen {
                 y
             )
 
-            this.graphicsManager.render(invader);
-
-            this.graphicsManager.renderText(
-                this.font,
-                this.fillStyle,
-                this.rhVertical,
-                this.y + (invader.height / 2),
-                "Score " + invader.score
-            );
+            this.invaders.push(invader);
 
             index++;
-            this.y += this.verticalSpacing;
         }
-    }
 
-    renderMothershipInfo = () => {
-        let index = 1;
+        this.motherships = [];
+
+        const invaderY = Object.entries(this.invaderConfig.configs).length * this.verticalSpacing;
+        index = 1;
         for (const [subType, config] of Object.entries(this.mothershipConfig.configs)) {
             const width = config.width;
             const type = this.mothershipConfig.type;
             const configs = this.mothershipConfig.configs;
-            const x = this.lhVertical - (width / 2);
-            const y = this.y;
+            let x = this.lhVertical - (width / 2);
+            let y = this.verticalSpacing * index + invaderY;
 
             const mothership = new Mothership(
                 type,
@@ -91,19 +76,72 @@ export default class IntroScreen {
                 y
             )
 
-            this.graphicsManager.render(mothership);
+            this.motherships.push(mothership);
+
+            // this.graphicsManager.render(mothership);
+
+            x = this.rhVertical;
+            y += mothership.height / 2;
 
             this.graphicsManager.renderText(
                 this.font,
                 this.fillStyle,
-                this.rhVertical,
-                this.y + (mothership.height / 2),
+                x,
+                y,
                 "Score ???"
             )
 
             index++;
-            this.y += this.verticalSpacing;
+            this.y += this.verticalSpacing * index;
         }
+    }
+
+    render = () => {
+        this.renderInvadersInfo();
+        this.renderMothershipInfo();
+        this.renderStartButton();
+        this.renderInstructions();
+    }
+
+    update = (delta) => {
+        this.motherships.forEach(mothership => {
+            mothership.update(delta);
+        });
+        this.render();
+    }
+
+    renderInvadersInfo = () => {
+        this.invaders.forEach(invader => {
+            this.graphicsManager.render(invader);
+
+            const x = this.rhVertical;
+            const y = invader.y + (invader.height / 2);
+
+            this.graphicsManager.renderText(
+                this.font,
+                this.fillStyle,
+                x,
+                y,
+                "Score " + invader.score
+            );
+        });
+    }
+
+    renderMothershipInfo = () => {
+        this.motherships.forEach(mothership => {
+            this.graphicsManager.render(mothership);
+
+            const x = this.rhVertical;
+            const y = mothership.y + (mothership.height / 2);
+
+            this.graphicsManager.renderText(
+                this.font,
+                this.fillStyle,
+                x,
+                y,
+                "Score ???"
+            );
+        });
     }
 
     renderStartButton = () => {
