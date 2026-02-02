@@ -71,8 +71,9 @@ export default class Game {
         this.bullets = null;
         this.cities = null;
         this.mothership = null;
-        this.mothershipOldTime = 0;
-        this.mothershipNewTime = null;
+        this.mothershipTimer = 0;
+        this.mothershipMinTime = this.mothershipConfig.configs['main'].timingMin;
+        this.mothershipMaxTime = this.mothershipConfig.configs['main'].timingMax;
         this.collisionInfo = null;
         this.now = null;
         this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime;
@@ -227,6 +228,7 @@ export default class Game {
         );
 
         this.mothership.initializeLevel();
+        this.resetMothershipSpawnTime();
 
         this.cities.initializeLevel();
 
@@ -234,7 +236,6 @@ export default class Game {
 
         this.now = 0;
         this.invaderMoveTime = this.invadersConfig.configs['wave1'].moveTime - this.invadersConfig.configs['wave1'].speedIncrease;
-        this.mothershipNewTime = 0;
     }
 
     setupGraphics = async (graphicsSpriteUrl) => {
@@ -312,7 +313,7 @@ export default class Game {
             },
             "Tank vs Mothership": (collision) => {
                 this.mothership.destroy();
-                this.resetMothershipTime();
+                this.resetMothershipSpawnTime();
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.score.increase(collision.target.score);
                 this.soundManager.play('mothershipExplosion');
@@ -479,7 +480,11 @@ export default class Game {
         this.checkCollisions();
         this.bullets.move();
         this.moveInvaders(currentTime);
-        this.moveMothership(currentTime);
+
+        if (this.mothership.isActive && !this.mothership.animationType !== 'exploding') {
+            this.moveMothership();
+            this.createMothershipBullets();
+        }
 
         if (inputHandler.isKeyPressed('Space')) {
             this.onTankBulletFired();
@@ -495,6 +500,14 @@ export default class Game {
         this.invaders.update(delta);
         this.mothership.update(delta);
         this.tank.update(delta);
+
+        this.mothershipTimer += delta;
+
+        if (this.mothershipTimer > this.mothershipConfig.configs['main'].timingMin) {
+            this.spawnMothership();
+            this.mothershipTimer = 0;
+        }
+
         this.render();
     }
 
@@ -637,10 +650,9 @@ export default class Game {
 
     moveMothership = (currentTime) => {
         if (this.mothership.isActive && !this.mothership.animationType !== 'exploding') {
-            this.createMothershipBullets();
             this.mothership.move();
             if (this.mothership.x > this.screenConfig.configs['main'].width) {
-                this.mothership.remove();
+                this.mothership.reset();
                 this.resetMothershipTime();
             }
         } else {
@@ -674,8 +686,13 @@ export default class Game {
         }
     }
 
-    resetMothershipTime = () => {
-        // this.mothershipNewTime = Math.floor((Math.random() * 30000) + 10000);
-        this.mothershipNewTime = 0;
+    resetMothershipSpawnTime = () => {
+        // this.mothershipTimer = Math.random() * this.mothershipMinTime;
+        this.mothershipSpawnTime = Math.random() * (this.mothershipMaxTime - this.mothershipMinTime) + this.mothershipMinTime;
+    }
+
+    spawnMothership = () => {
+        this.mothership.isActive = true;
+        const t = 0;
     }
 }

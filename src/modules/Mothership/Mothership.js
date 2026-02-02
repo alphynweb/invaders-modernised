@@ -8,7 +8,7 @@ export default class Mothership {
         this.height = config.height;
         this.x = x;
         this.y = y;
-        this.isActive = true;
+        this.isActive = false;
         this.speed = config.speed;
         this.animationType = 'normal';
         this.animationFrame = 0;
@@ -18,6 +18,9 @@ export default class Mothership {
         this.spriteInfo = config.spriteInfo;
         this.explosionDuration = config.explosionDuration;
         this.explosionTimer = 0;
+        this.appearanceTimer = 0;
+        this.timingMin = config.timingMin;
+        this.timingMax = config.timingMax;
     }
 
     initializeLevel() {
@@ -31,7 +34,7 @@ export default class Mothership {
 
     reset() {
         this.x = -this.width;
-        this.isActive = true;
+        this.isActive = false;
         this.score = Math.ceil(Math.random() * 10) * 100;
         this.animationType = 'normal';
     }
@@ -62,11 +65,12 @@ export default class Mothership {
                 this.animationFrame = (this.animationFrame + 1) % this.animationFrames;
             }
         }
+
         if (this.animationType === 'exploding') {
             this.explosionTimer += delta;
             if (this.explosionTimer >= this.explosionDuration) {
                 this.explosionTimer = 0;
-                this.remove();
+                this.reset();
             }
         }
     }
