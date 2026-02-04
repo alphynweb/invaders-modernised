@@ -28,6 +28,8 @@ export default class IntroScreen {
         this.verticalSpacing = 60;
         this.y = this.verticalSpacing;
         this.currentYPost = 0;
+        this.invadersInfo = [];
+        this.invadersInfoIndex = 0;
 
         this.startGame = startGame;
         this.init();
@@ -94,11 +96,15 @@ export default class IntroScreen {
             index++;
             this.y += this.verticalSpacing * index;
         }
+
+        this.buildInvadersInfo();
+        this.invadersInfo[0].status = 'started';
+        console.log(this.invadersInfo);
     }
 
-    render = () => {
-        this.renderInvadersInfo();
-        this.renderMothershipInfo();
+    render = (delta) => {
+        this.renderInvadersInfo(delta);
+        // this.renderMothershipInfo();
         this.renderStartButton();
         this.renderInstructions();
     }
@@ -107,24 +113,81 @@ export default class IntroScreen {
         this.motherships.forEach(mothership => {
             mothership.update(delta);
         });
-        this.render();
+        this.render(delta);
     }
 
-    renderInvadersInfo = () => {
-        this.invaders.forEach(invader => {
-            this.graphicsManager.render(invader);
+    buildInvadersInfo = () => {
+        const delay = 200;
 
+        this.invaders.forEach(invader => {
             const x = this.rhVertical;
             const y = invader.y + (invader.height / 2);
 
-            this.graphicsManager.renderText(
-                this.font,
-                this.fillStyle,
+            const invaderInfo = {
+                invader,
                 x,
                 y,
-                "Score " + invader.score
-            );
+                font: this.font,
+                fillStyle: this.fillStyle,
+                text: "Score " + invader.score,
+                delay,
+                status: false
+            };
+
+            this.invadersInfo.push(invaderInfo);
         });
+
+        this.motherships.forEach(mothership => {
+            const x = this.rhVertical;
+            const y = mothership.y + (mothership.height / 2);
+
+            const mothershipInfo = {
+                invader: mothership,
+                x,
+                y,
+                font: this.font,
+                fillStyle: this.fillStyle,
+                text: "Score ???",
+                delay,
+                status: false
+            };
+
+            this.invadersInfo.push(mothershipInfo);
+        });
+    }
+
+    renderInvadersInfo = (delta) => {
+        // let currentInvaderInfo;
+
+        // Display statically the text that has already been finished
+        this.invadersInfo.forEach(currentInvaderInfo => {
+            if (currentInvaderInfo.status == 'finished') {
+                this.graphicsManager.render(currentInvaderInfo.invader);
+                this.graphicsManager.renderText(
+                    currentInvaderInfo.font,
+                    currentInvaderInfo.fillStyle,
+                    currentInvaderInfo.x,
+                    currentInvaderInfo.y,
+                    currentInvaderInfo.text
+                );
+            }
+        });
+
+        if (this.invadersInfo[this.invadersInfoIndex].status == 'finished') {
+            if (this.invadersInfoIndex < (this.invadersInfo.length - 1)) {
+                this.invadersInfoIndex++;
+                this.invadersInfo[this.invadersInfoIndex].status = 'started';
+            }
+        }
+
+
+        if (this.invadersInfo[this.invadersInfoIndex].status == 'started') {
+            this.graphicsManager.render(this.invadersInfo[this.invadersInfoIndex].invader);
+            this.graphicsManager.renderTypewriterText(
+                delta,
+                this.invadersInfo[this.invadersInfoIndex]
+            );
+        }
     }
 
     renderMothershipInfo = () => {

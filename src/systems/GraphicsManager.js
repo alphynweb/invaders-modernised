@@ -4,6 +4,11 @@ export default class GraphicsManager {
         this.entityMap = entityMap;
         this.ctx = ctx;
         this.sprite = null;
+        this.typewriterTextTimer = 0;
+        this.typewriterTextIndex = 0;
+        this.typewriterTextX = 0;
+        this.typewriterText = '';
+        this.typewriterTextEnd = false;
     }
 
     async init() {
@@ -64,10 +69,43 @@ export default class GraphicsManager {
     }
 
     renderText = (font, fillStyle, x, y, text) => {
+        this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'middle';
         this.ctx.font = font;
         this.ctx.fillStyle = fillStyle;
         this.ctx.fillText(text, x, y);
+    }
+
+    renderTypewriterText = (delta, textObject) => {
+        this.typewriterTextTimer += delta;
+
+        const font = textObject.font;
+        const fillStyle = textObject.fillStyle;
+        const x = textObject.x;
+        const y = textObject.y;
+        const delay = textObject.delay;
+        const text = textObject.text;
+        const textSplit = text.split('');
+
+        this.renderText(
+            font,
+            fillStyle,
+            x,
+            y,
+            this.typewriterText
+        );
+
+        if (this.typewriterTextTimer > delay) {
+            const chr = textSplit[this.typewriterTextIndex];
+            this.typewriterText += chr;
+            this.typewriterTextTimer = 0;
+            this.typewriterTextIndex++;
+            if (this.typewriterTextIndex > textSplit.length) {
+                textObject.status = 'finished';
+                this.typewriterTextIndex = 0;
+                this.typewriterText = '';
+            }
+        }
     }
 
     renderSprite = (spriteInfo, x, y) => {
