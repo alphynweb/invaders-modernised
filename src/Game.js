@@ -660,7 +660,7 @@ export default class Game {
             this.mothership.move();
             if (this.mothership.x > this.screenConfig.configs['main'].width) {
                 this.mothership.reset();
-                this.resetMothershipTime();
+                this.resetMothershipSpawnTime();
             }
         } else {
             if (currentTime > this.mothershipOldTime + this.mothershipNewTime) {
@@ -694,7 +694,6 @@ export default class Game {
     }
 
     resetMothershipSpawnTime = () => {
-        // this.mothershipTimer = Math.random() * this.mothershipMinTime;
         this.mothershipSpawnTime = Math.random() * (this.mothershipMaxTime - this.mothershipMinTime) + this.mothershipMinTime;
     }
 
