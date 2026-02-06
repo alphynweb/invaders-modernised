@@ -12,6 +12,9 @@ import {
     BUTTON
 } from './config';
 
+// Events
+import {EventEmitter} from 'events';
+
 //Utils
 import collisionDetector from './utils/CollisionDetector';
 import inputHandler from './utils/inputHandler';
@@ -43,6 +46,8 @@ import GraphicsManager from './systems/GraphicsManager';
 
 export default class Game {
     constructor() {
+        this.eventEmitter = new EventEmitter();
+
         this.cityConfig = CITY;
         this.cityCollisionMap = cityCollisionMap;
         this.textConfig = TEXT;
@@ -180,6 +185,7 @@ export default class Game {
         this.finishLevel = null;
 
         this.introScreen = new IntroScreen(
+            this.eventEmitter,
             this.graphicsManager,
             this.screen,
             this.onStartGame,
@@ -250,6 +256,7 @@ export default class Game {
         ]);
 
         this.graphicsManager = new GraphicsManager(
+            this.eventEmitter,
             graphicsSpriteUrl,
             entityMap,
             ctx

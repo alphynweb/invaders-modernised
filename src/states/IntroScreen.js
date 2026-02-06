@@ -4,6 +4,7 @@ import Button from '../modules/Button/Button';
 
 export default class IntroScreen {
     constructor(
+        eventEmitter,
         graphicsManager,
         screen,
         startGame,
@@ -12,6 +13,9 @@ export default class IntroScreen {
         invaderConfig,
         buttonConfig
     ) {
+        this.eventEmitter = eventEmitter;
+        this.eventEmitter.on('typewriterTextFinished', this.handleTypewriterTextFinished);
+
         this.graphicsManager = graphicsManager;
         this.textConfig = textConfig;
         this.mothershipConfig = mothershipConfig;
@@ -30,6 +34,8 @@ export default class IntroScreen {
         this.currentYPost = 0;
         this.invadersInfo = [];
         this.invadersInfoIndex = 0;
+        this.textDelay = 200;
+        this.textTimer = 0;
 
         this.startGame = startGame;
         this.init();
@@ -117,8 +123,6 @@ export default class IntroScreen {
     }
 
     buildInvadersInfo = () => {
-        const delay = 200;
-
         this.invaders.forEach(invader => {
             const x = this.rhVertical;
             const y = invader.y + (invader.height / 2);
@@ -130,7 +134,7 @@ export default class IntroScreen {
                 font: this.font,
                 fillStyle: this.fillStyle,
                 text: "Score " + invader.score,
-                delay,
+                delay: this.textDelay,
                 status: false
             };
 
@@ -148,7 +152,7 @@ export default class IntroScreen {
                 font: this.font,
                 fillStyle: this.fillStyle,
                 text: "Score ???",
-                delay,
+                delay: this.textDelay,
                 status: false
             };
 
@@ -157,7 +161,7 @@ export default class IntroScreen {
     }
 
     renderInvadersInfo = (delta) => {
-        // let currentInvaderInfo;
+        this.textTimer += delta;
 
         // Display statically the text that has already been finished
         this.invadersInfo.forEach(currentInvaderInfo => {
@@ -181,30 +185,13 @@ export default class IntroScreen {
         }
 
 
-        if (this.invadersInfo[this.invadersInfoIndex].status == 'started') {
+        if (this.invadersInfo[this.invadersInfoIndex].status == 'started' && this.textTimer > this.textDelay) {
             this.graphicsManager.render(this.invadersInfo[this.invadersInfoIndex].invader);
             this.graphicsManager.renderTypewriterText(
                 delta,
                 this.invadersInfo[this.invadersInfoIndex]
             );
         }
-    }
-
-    renderMothershipInfo = () => {
-        this.motherships.forEach(mothership => {
-            this.graphicsManager.render(mothership);
-
-            const x = this.rhVertical;
-            const y = mothership.y + (mothership.height / 2);
-
-            this.graphicsManager.renderText(
-                this.font,
-                this.fillStyle,
-                x,
-                y,
-                "Score ???"
-            );
-        });
     }
 
     renderStartButton = () => {
@@ -233,6 +220,7 @@ export default class IntroScreen {
 
             if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > yClicked) {
                 event.currentTarget.removeEventListener('click', clickListen);
+                this.cleanup();
                 this.startGame();
             }
         }
@@ -294,5 +282,14 @@ export default class IntroScreen {
             y,
             'Fire'
         );
+    }
+
+    handleTypewriterTextFinished = (invaderObject) => {
+        invaderObject.status = 'finished';
+        this.textTimer = 0;
+    }
+
+    cleanup = () => {
+        this.eventEmitter.removeListener('typewriterTextFinished', this.handleTypewriterTextFinished);
     }
 }

@@ -12,5 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "events": "^3.3.0"
   }
 }

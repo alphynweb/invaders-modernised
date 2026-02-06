@@ -1,5 +1,6 @@
 export default class GraphicsManager {
-    constructor(spriteUrl, entityMap, ctx) {
+    constructor(eventEmitter, spriteUrl, entityMap, ctx) {
+        this.eventEmitter = eventEmitter;
         this.spriteUrl = spriteUrl;
         this.entityMap = entityMap;
         this.ctx = ctx;
@@ -100,8 +101,8 @@ export default class GraphicsManager {
             this.typewriterText += chr;
             this.typewriterTextTimer = 0;
             this.typewriterTextIndex++;
-            if (this.typewriterTextIndex > textSplit.length) {
-                textObject.status = 'finished';
+            if (this.typewriterTextIndex >= textSplit.length) {
+                this.eventEmitter.emit('typewriterTextFinished', textObject);
                 this.typewriterTextIndex = 0;
                 this.typewriterText = '';
             }
