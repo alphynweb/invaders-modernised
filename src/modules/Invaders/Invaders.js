@@ -20,6 +20,7 @@ export default class Invaders {
     initializeLevel(levelConfig) {
         this.setLevelConfig(levelConfig);
         this.build();
+        this.direction = 'right';
     }
 
     setLevelConfig(levelConfig) {
