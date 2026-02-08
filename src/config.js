@@ -15,7 +15,7 @@ export const LIVES = {
         main: {
             x: 600,
             y: 20,
-            lives: 5,
+            lives: 2,
             livesGap: 10, // Space between lives at top of screen
             spriteInfo: {
                 normal: {

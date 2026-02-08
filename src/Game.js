@@ -331,10 +331,6 @@ export default class Game {
                 this.bullets.removeBullet(collision.bulletIndex);
                 this.tank.destroy();
                 this.lives.lose();
-                if (this.lives.currentLives === 0) {
-                    this.gameStates.currentState = this.gameStates.over;
-                    return;
-                }
                 this.soundManager.play('tankExplosion');
                 this.gameStates.currentState = this.gameStates.lose;
             },
@@ -559,6 +555,11 @@ export default class Game {
         const delta = this.gameLoop.delta;
         this.tank.update(delta);
         if (this.tank.animationType === 'normal') {
+            if (this.lives.livesLeft === 0) {
+                this.gameStates.currentState = this.gameStates.over;
+                return;
+            }
+
             this.tank = null;
             this.tank = new Tank(
                 this.tankConfig.type,
