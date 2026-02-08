@@ -13,7 +13,7 @@ import {
 } from './config';
 
 // Events
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 
 //Utils
 import collisionDetector from './utils/CollisionDetector';
@@ -168,6 +168,7 @@ export default class Game {
         );
 
         this.collisionSystem = new CollisionSystem(
+            this.screen,
             this.collisionDetector,
             this.tankConfig,
             this.invaderConfig,
@@ -378,6 +379,9 @@ export default class Game {
             },
             "Mothership vs City": (collision) => {
 
+            },
+            "Invaders vs Bottom": (collision) => {
+                this.gameStates.currentState = this.gameStates.over;
             }
         }
 
@@ -683,13 +687,6 @@ export default class Game {
                 this.soundManager.play("invadersMoved");
             }
             this.now = currentTime;
-
-            // Check for invaders reaching bottom of screen
-            this.invaders.invaderList.forEach((invader) => {
-                if (invader.y + invader.height > TANK.y) {
-                    this.gameStates.currentState = this.gameStates.over;
-                }
-            });
         }
     }
 

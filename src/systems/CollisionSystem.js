@@ -1,5 +1,6 @@
 export default class CollisionSystem {
     constructor(
+        screen,
         collisionDetector,
         tankConfig,
         invadersConfigArray,
@@ -10,6 +11,7 @@ export default class CollisionSystem {
         bullets,
         cities
     ) {
+        this.screen = screen;
         this.tankConfig = tankConfig;
         this.invadersConfigArray = invadersConfigArray;
         this.cityConfig = cityConfig;
@@ -29,6 +31,7 @@ export default class CollisionSystem {
         this.handleTankBulletCollisions();
         this.handleInvaderBulletCollisions();
         this.handleMothershipBulletCollisions();
+        this.handleInvadersBottom();
     }
 
     handleTankBulletCollisions = () => {
@@ -75,9 +78,9 @@ export default class CollisionSystem {
                     // Area to check imagedata of
                     const topLeftX = tankBullet.x - city.x; // Bullet x
                     const topLeftY = tankBullet.y - city.y - 1; // 1 px above bullet y
-                    
+
                     const width = tankBullet.width;
-                    
+
                     const height = 1;
                     const imgData = city.ctx.getImageData(topLeftX, topLeftY, width, height);
 
@@ -207,5 +210,24 @@ export default class CollisionSystem {
                 }
             }
         });
+    }
+
+    handleInvadersBottom = () => {
+        let collisionObj;
+
+        for (let invader of this.invaders.invaderList) {
+            if (invader.y + invader.height >= this.screen.height) {
+                console.log(this.screen.height);
+                console.log(invader.y + invader.height);
+                collisionObj = {
+                    type: 'Invaders vs Bottom',
+                    bullet: null,
+                    bulletIndex: null,
+                    target: null
+                }
+                this.collisions.push(collisionObj);
+                break;
+            }
+        }
     }
 }

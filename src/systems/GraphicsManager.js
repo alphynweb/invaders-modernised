@@ -66,7 +66,7 @@ export default class GraphicsManager {
             dy,
             width,
             height
-        )
+        );
     }
 
     renderText = (font, fillStyle, x, y, text) => {
