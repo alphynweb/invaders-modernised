@@ -119,15 +119,15 @@ export default class Game {
 
         this.soundManager.mute();
 
-        this.setupStates();
+
         this.setupInstances();
+        this.setupStates();
         this.setupDefinitions();
         this.setupEntities();
 
         inputHandler.init();
 
         this.gameStates.currentState = this.gameStates.intro;
-        // this.gameStates.currentState();
         this.gameLoop.start();
     }
 
@@ -211,8 +211,14 @@ export default class Game {
         );
 
         this.gameOver = new GameOver(
-            this.gameTextConfig,
-            this.screen
+            this.eventEmitter,
+            this.graphicsManager,
+            this.screen,
+            this.onStartGame,
+            this.onEndGame,
+            this.textConfig,
+            this.buttonConfig,
+            this.score
         );
 
     };
@@ -416,7 +422,6 @@ export default class Game {
             this.graphicsManager.render(bullet);
         });
 
-
         const scoreTextConfig = this.textConfig.configs['score'];
         this.graphicsManager.renderText(
             scoreTextConfig.font,
@@ -556,6 +561,8 @@ export default class Game {
         this.tank.update(delta);
         if (this.tank.animationType === 'normal') {
             if (this.lives.livesLeft === 0) {
+                this.cities.clear();
+                this.gameOver.init();
                 this.gameStates.currentState = this.gameStates.over;
                 return;
             }
@@ -573,9 +580,9 @@ export default class Game {
     }
 
     onEndGame = () => {
-        this.gameLoop.stop();
-        this.gameOver.endGame(this.cities);
-        this.gameOver.render(this.score, this.startButton);
+        this.screen.clear();
+        const delta = this.gameLoop.delta;
+        this.gameOver.update(delta);
     }
 
     createInvaderBullets = () => {

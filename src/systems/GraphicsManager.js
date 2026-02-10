@@ -4,6 +4,8 @@ export default class GraphicsManager {
         this.spriteUrl = spriteUrl;
         this.entityMap = entityMap;
         this.ctx = ctx;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
         this.sprite = null;
         this.typewriterTextTimer = 0;
         this.typewriterTextIndex = 0;
@@ -70,8 +72,6 @@ export default class GraphicsManager {
     }
 
     renderText = (font, fillStyle, x, y, text) => {
-        this.ctx.textAlign = 'left';
-        this.ctx.textBaseline = 'middle';
         this.ctx.font = font;
         this.ctx.fillStyle = fillStyle;
         this.ctx.fillText(text, x, y);
@@ -103,8 +103,7 @@ export default class GraphicsManager {
             this.typewriterTextIndex++;
             if (this.typewriterTextIndex >= textSplit.length) {
                 this.eventEmitter.emit('typewriterTextFinished', textObject);
-                this.typewriterTextIndex = 0;
-                this.typewriterText = '';
+                this.clear();
             }
         }
     }
@@ -170,5 +169,10 @@ export default class GraphicsManager {
 
         );
         this.ctx.globalCompositeOperation = 'source-over'; // Change back to default for re-rendering of cities
+    }
+
+    clear = () => {
+        this.typewriterTextIndex = 0;
+        this.typewriterText = '';
     }
 }

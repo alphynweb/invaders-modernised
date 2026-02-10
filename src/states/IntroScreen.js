@@ -15,7 +15,6 @@ export default class IntroScreen {
     ) {
         this.eventEmitter = eventEmitter;
         this.eventEmitter.on('typewriterTextFinished', this.handleTypewriterTextFinished);
-
         this.graphicsManager = graphicsManager;
         this.textConfig = textConfig;
         this.mothershipConfig = mothershipConfig;
@@ -133,7 +132,7 @@ export default class IntroScreen {
                 y,
                 font: this.font,
                 fillStyle: this.fillStyle,
-                text: "Score " + invader.score,
+                text: "Test " + invader.score,
                 delay: this.textDelay,
                 status: false
             };
@@ -151,7 +150,7 @@ export default class IntroScreen {
                 y,
                 font: this.font,
                 fillStyle: this.fillStyle,
-                text: "Score ???",
+                text: "Test ???",
                 delay: this.textDelay,
                 status: false
             };
@@ -220,6 +219,7 @@ export default class IntroScreen {
 
             if (x < xClicked && (x + width) > xClicked && y < yClicked && (y + height) > yClicked) {
                 event.currentTarget.removeEventListener('click', clickListen);
+                this.graphicsManager.clear();
                 this.cleanup();
                 this.startGame();
             }
@@ -290,6 +290,8 @@ export default class IntroScreen {
     }
 
     cleanup = () => {
+        this.invadersInfo = [];
+        this.motherships = [];
         this.eventEmitter.removeListener('typewriterTextFinished', this.handleTypewriterTextFinished);
     }
 }
